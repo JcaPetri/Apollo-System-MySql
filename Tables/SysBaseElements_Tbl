@@ -1,0 +1,157 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the bpmtbaseelement
+/* 		contiene la informacion generada por los usuario del sistema, todos los codigos que se utilizaran en las distintas tablas, 
+		 (excepto los comentarios que no se cargan aqui), 
+         Aclaracion: Una vez Creado el valor, los valores del Scope y BusinessUnit no se pueden cambiar
+		 cada codigo ingresado se le genera un ID (uniqueidentifier) y un valor unico autonumerico.
+		 Usualmente todos los IDNum se crean en la tabla bpmfoutbaseelement unica para todas las bases de datos
+		 es unico para un:
+				Name 		(es el codigo legible por el usuario, para esa compania, idioma y scope es unico)
+				Scope		(es el IDNum del Ambito de Aplicación / Tabla a la que pertenece el registro)
+				BusinessUnit	(es el IDNum de la Unidad de Negocio de la Compania dueña del Registro)
+				Language		(el idioma predeterminado), vinculo con la tabla bpmfoutbaseelement unica para todas las bases de datos
+		 de esta manera nos aseguramos de no duplicar informacion
+		 El resto de las tablas tienen un vinculo a esta tabla para identificar que tipo de elemento es.
+*/
+
+-- Delete the table bpmfoutbaseelement if Exits, but First Altere the tables that have a referenced foreign key
+USE bpmcore;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced bpmfoutbaseelement Tables:
+    ALTER TABLE `bpmcore`.`bpmfoutbaseelementlanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+    ALTER TABLE `bpmcore`.`bpmfoutbaseelementlanguage`  DROP FOREIGN KEY `LanguageIDnBel`;
+    ALTER TABLE `bpmcore`.`bpmfoutdocumentation`  DROP FOREIGN KEY `DocumentationIDnDc`;
+    ALTER TABLE `bpmcore`.`bpmfoutdocumentation`  DROP FOREIGN KEY `LanguageIDnDc`;
+    
+    ALTER TABLE `bpmcore`.`systcompanies`  DROP FOREIGN KEY `BusinessUnitIDnCmp`;
+    ALTER TABLE `bpmcore`.`systtablefields`  DROP FOREIGN KEY `TableFieldIDnTfd`;
+    
+    
+    ALTER TABLE `bpmcore`.`bpmfoutentity`  DROP FOREIGN KEY `EntityIDnEnt`;
+    ALTER TABLE `bpmcore`.`bpmfoutentitystructure`  DROP FOREIGN KEY `FieldPropertiyIDnFpt`;
+    ALTER TABLE `bpmcore`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `FieldIDnEdv`;
+    ALTER TABLE `bpmcore`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `EntityIDnEdv`;
+    ALTER TABLE `bpmcore`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `DefaultVersionIDnEdv`;    
+    ALTER TABLE `bpmcore`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldIDnFpt`;    
+    ALTER TABLE `bpmcore`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldPropertyTypeIDnFpt`;     
+    ALTER TABLE `bpmcore`.`bpmfoutrootelement`  DROP FOREIGN KEY `RootElementIDnRel`;     
+    ALTER TABLE `bpmcore`.`bpmfoutrelationship`  DROP FOREIGN KEY `RelationshipIDnRsp`;     
+    ALTER TABLE `bpmcore`.`bpmfoutrelationship`  DROP FOREIGN KEY `DirectionIDnRsp`;     
+    ALTER TABLE `bpmcore`.`bpminftdefinition`  DROP FOREIGN KEY `DefinitionIDnDef`;         
+    ALTER TABLE `bpmcore`.`bpminftimport`  DROP FOREIGN KEY `ImportIDnDef`;         
+    
+
+-- After deleted the referenced, you can delete the table
+DROP TABLE IF EXISTS `bpmcore`.`bpmfoutbaseelement`;
+
+CREATE TABLE `bpmfoutbaseelement` (
+	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,					-- Es el ID UniqueIdentifier, valor unico del registro
+	  `IDNum` int NOT NULL AUTO_INCREMENT,												-- Es el IDNum valor numerico incremental, valor unico del registro
+	  `IDName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,			-- Código en letras del ID
+	  `ScopeIDn` int NOT NULL,						-- Es el IDNum del Ambito de Aplicación / Tabla a la que pertenece el registro, numeros variales
+	  `BusinessUnitIDn` int NOT NULL,					-- Es el IDNum de la Unidad de Negocio de la Compania dueña del Registro, Scope = 25, numeros variales
+	  `LanguageIDn` int NOT NULL,					-- Es el IDNum del Idioma del Registro, Scope = 11 TSysLanguage, 652 English -- Codigo del idioma por defecto elegido. Este es el mismo durante todo el sistema.
+	  `IDCode` int NOT NULL,						-- Codigo numerico establecido por el usuario, permite organizar los contenidos de la tabla por rangos, se carga automaticamente si no se especifica
+	  `DefinitionIDn` smallint NOT NULL,					-- Es el IDNum del tipo de definicion del elemento en que lenguaje esta escrito, Scope = 23 tSisDefinition, 2070 bpmndefaultdefinition
+	  `InformationTypeIDn` smallint NOT NULL,				-- Es el IDNum del tipo de Informacion que representa el registro, Scope = 18 tSisInfoType, 381 Data, 382 Software = definición del código, bajo que estandar esta escrito. Define el tipo de dato que es el BaseElement, puede ser: Data (son los elementos reales que forman el sistema, los procesos, etc.), Software (es la estructura BMPN, XML, XSD).	
+	  `IDIsUsed` tinyint NOT NULL,					-- 1 = true, 0 = false
+	  `StateIDn` smallint NOT NULL,					-- Es el IDNum del estado del registro, Scope = 21 tSisState, 372 Ena, 373 Dis
+	  `CreatedByIDn` mediumint NOT NULL,				-- Es el IdNum del usuario que creo el registro, Scope = 231 UserTUser, numeros variales
+	  `LastModifiedByIDn` mediumint NOT NULL,				-- Es el IdNum del ultimo usuario que modifico el registro, Scope = 231 UserTUser, numeros variales
+	  `OwnerIDn` mediumint NOT NULL,					-- Es el IdNum del usuario dueño del registro, Scope = 231 UserTUser, numeros variales
+	  `DateCreated` datetime NOT NULL,					-- Es la fecha de creacion del registro
+	  `DateTimeStamp` timestamp NOT NULL,				-- Es la fecha de la ultima modificacion del registro
+	  `TzNameIDn` smallint NOT NULL,					-- Es el IDNum del Time Zone, Scope = 13 TimeZoneName, 1206 = America/Buenos_Aires, Tabla BpmfouTBaseElement [TzName] -- Define el Time Zone del UTC
+	  `TzOffset` smallint NOT NULL,					-- Es la diferencia horario entre el Zero Time Zone y la zona desde donde se modifico el registro
+	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,	-- Acumula el historico del registro
+	  PRIMARY KEY (`IDNum`),
+	  UNIQUE KEY `ID_UNIQUE` (`ID`) /*!80000 INVISIBLE */,
+	  UNIQUE KEY `IDNum_UNIQUE` (`IDNum`),
+	  UNIQUE KEY `IDNameScopeCompLang_UNIQUE` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`),
+	  UNIQUE KEY `IDScopeIDCode_UNIQUE` (`ScopeIDn`,`BusinessUnitIDn`,`IDCode`),
+	  KEY `ID_idx` (`ID`) /*!80000 INVISIBLE */,
+      KEY `IDNum_idx` (`IDNum`) /*!80000 INVISIBLE */,
+      KEY `BusinessUnitIDn_idx` (`BusinessUnitIDn`),
+	  KEY `IDCode_idx` (`IDCode`) /*!80000 INVISIBLE */,
+	  KEY `IDIsUsed_idx` (`IDIsUsed`),
+	  KEY `IDCompScope_idx` (`BusinessUnitIDn`,`ScopeIDn`)
+) ENGINE=InnoDB 
+	AUTO_INCREMENT=0 
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+    COMMENT='contiene la informacion generada por los usuario del sistema, todos los codigos que se utilizaran en las distintas tablas, 
+			 (excepto los comentarios que no se cargan aqui), 
+             cada codigo ingresado se le genera un ID (uniqueidentifier) y un valor unico autonumerico.
+             Usualmente todos los IDNum se crean en la tabla bpmfoutbaseelement unica para todas las bases de datos
+			 es unico para un:
+					Name 		(es el codigo legible por el usuario, para esa compania, idioma y scope es unico)
+					Scope		(es el IDNum del Ambito de Aplicación / Tabla a la que pertenece el registro)
+					BusinessUnit	(es el IDNum de la Unidad de Negocio de la Compania dueña del Registro)
+					Language	(el idioma predeterminado), vinculo con la tabla bpmfoutbaseelement unica para todas las bases de datos
+			 de esta manera nos aseguramos de no duplicar informacion
+			 El resto de las tablas tienen un vinculo a esta tabla para identificar que tipo de elemento es.
+			 ';
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Insert - bpmfoutbaseelement
+-- en caso que desde Java no pasen la informacion de estos campos,
+-- establece el valor del ID uniqueidentifier, el IDCode, el DateCreated y el DateTimeStamp
+USE bpmcore;
+DROP TRIGGER IF EXISTS `bpmcore`.`bpmfoutbaseelement_BEFORE_INSERT`;
+DELIMITER $$
+USE `bpmcore`$$
+CREATE DEFINER=`root`@`localhost` TRIGGER `bpmfoutbaseelement_BEFORE_INSERT` BEFORE INSERT ON `bpmfoutbaseelement` FOR EACH ROW BEGIN
+	IF new.ID IS NULL OR new.ID = '' THEN
+		SET new.ID = uuid();				-- Valor UniqueIdentifier
+	END IF;
+    IF new.IDCode IS NULL OR new.IDCode = 0 OR new.IDCode = '' THEN
+		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `bpmcore`.`bpmfoutbaseelement` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
+        -- Asigna el valor del IDCode en forma incremental para esa empresa y scope, ya que no puede duplicarse
+	END IF;
+	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+END$$
+DELIMITER ;
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Update - bpmfoutbaseelement
+-- en caso que desde Java no pasen la informacion de estos campos,
+-- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
+USE bpmcore;
+DROP TRIGGER IF EXISTS `bpmcore`.`bpmfoutbaseelement_BEFORE_UPDATE`;
+DELIMITER $$
+USE `bpmcore`$$
+CREATE DEFINER=`root`@`localhost` TRIGGER `bpmfoutbaseelement_BEFORE_UPDATE` BEFORE UPDATE ON `bpmfoutbaseelement` FOR EACH ROW BEGIN
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+    IF new.TableHistory = 'SetNull' THEN
+		SET new.TableHistory = null;
+    ELSEIF new.TableHistory = 'SetOff' THEN
+		SET new.TableHistory = old.TableHistory;
+    ELSE
+		SET new.TableHistory = concat(old.IDNum,"†",
+					-- En caso que el valor nuevo (New) sea Igual al valor historico (Old), 
+						-- se pone vacio "", ya que el valor vigente sigue en el registro
+					-- En caso que el valor nuevo (New) sea distinto al valor historico (Old), 
+						-- se pone el valor que se va a reemplazar que es el Old.
+			IF(new.IDName = old.IDName,"",old.IDName),"†",
+			IF(new.ScopeIDn = old.ScopeIDn,"",old.ScopeIDn),"†",
+			IF(new.BusinessUnitIDn = old.BusinessUnitIDn,"",old.BusinessUnitIDn),"†",
+			IF(new.LanguageIDn = old.LanguageIDn,"",old.LanguageIDn),"†",
+                    IF(new.IDCode = old.IDCode,"",old.IDCode),"†",
+                    IF(new.DefinitionIDn = old.DefinitionIDn,"",old.DefinitionIDn),"†",
+                    IF(new.InformationTypeIDn = old.InformationTypeIDn,"",old.InformationTypeIDn),"†",
+                    IF(new.IDIsUsed = old.IDIsUsed,"",old.IDIsUsed),"†",
+                    IF(new.StateIDn = old.StateIDn,"",old.StateIDn),"†",
+                    IF(new.CreatedByIDn = old.CreatedByIDn,"",old.CreatedByIDn),"†",
+                    IF(new.LastModifiedByIDn = old.LastModifiedByIDn,"",old.LastModifiedByIDn),"†",
+                    IF(new.OwnerIDn = old.OwnerIDn,"",old.OwnerIDn),"†",
+                    IF(new.DateCreated = old.DateCreated,"",old.DateCreated),"†",
+                    old.DateTimeStamp,"†",
+                    IF(new.TzNameIDn = old.TzNameIDn,"",old.TzNameIDn),"†",
+                    IF(new.TzOffset = old.TzOffset,"",old.TzOffset),
+				IFNULL(concat("‡",old.TableHistory),""));
+		END IF;
+END$$
+DELIMITER ;
+
+-- Lista los datos de la tabla
+SELECT * FROM `bpmcore`.`bpmfoutbaseelement`;
