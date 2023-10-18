@@ -1,74 +1,93 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the bpmtbaseelement
-/* 		contiene la informacion generada por los usuario del sistema, todos los codigos que se utilizaran en las distintas tablas, 
-		 (excepto los comentarios que no se cargan aqui), 
-         Aclaracion: Una vez Creado el valor, los valores del Scope y BusinessUnit no se pueden cambiar
-		 cada codigo ingresado se le genera un ID (uniqueidentifier) y un valor unico autonumerico.
-		 Usualmente todos los IDNum se crean en la tabla bpmfoutbaseelement unica para todas las bases de datos
-		 es unico para un:
-				Name 		(es el codigo legible por el usuario, para esa compania, idioma y scope es unico)
-				Scope		(es el IDNum del Ambito de Aplicación / Tabla a la que pertenece el registro)
-				BusinessUnit	(es el IDNum de la Unidad de Negocio de la Compania dueña del Registro)
-				Language		(el idioma predeterminado), vinculo con la tabla bpmfoutbaseelement unica para todas las bases de datos
-		 de esta manera nos aseguramos de no duplicar informacion
-		 El resto de las tablas tienen un vinculo a esta tabla para identificar que tipo de elemento es.
+-- Create the SysBaseElements_Tbl table
+/* Contains the diccionary of all system elements of the Microservice.
+	The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
+	In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
+	To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
+	The key for each record:
+		ID		--> is the uniqueidentifier auto generated.
+		IDNum	--> is the autoincrement number auto generated.
+	The unique Key is the union of:
+	  IDName     		-> is the readable code by the user.
+	  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
+	  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
+	  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
+	Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
+				Only exist when you create the code in the specific table.
+		Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
+	Modification Rules:
+		You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
+		Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
+		If you want to change the code and it is in many places, the system must generate another code for the new value
+		To change this value, it must be done by the administrator. 
+		It is best to never change it.
+	Comments:
+		In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
+		Example:
+			In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, java entities, classes, etc.
+			In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system.
+			In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
+			In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
+	Tips:
+		The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.	 (+ MicroserviceIDn + )
 */
 
--- Delete the table bpmfoutbaseelement if Exits, but First Altere the tables that have a referenced foreign key
-USE bpmcore;
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Delete the table baseelement_tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced bpmfoutbaseelement Tables:
-    ALTER TABLE `bpmcore`.`bpmfoutbaseelementlanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
-    ALTER TABLE `bpmcore`.`bpmfoutbaseelementlanguage`  DROP FOREIGN KEY `LanguageIDnBel`;
-    ALTER TABLE `bpmcore`.`bpmfoutdocumentation`  DROP FOREIGN KEY `DocumentationIDnDc`;
-    ALTER TABLE `bpmcore`.`bpmfoutdocumentation`  DROP FOREIGN KEY `LanguageIDnDc`;
+-- The referenced baseelement_tbl Tables:
+    ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+    ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `LanguageIDnBel`;
+    ALTER TABLE `systemsdb`.`bpmfoutdocumentation`  DROP FOREIGN KEY `DocumentationIDnDc`;
+    ALTER TABLE `systemsdb`.`bpmfoutdocumentation`  DROP FOREIGN KEY `LanguageIDnDc`;
     
-    ALTER TABLE `bpmcore`.`systcompanies`  DROP FOREIGN KEY `BusinessUnitIDnCmp`;
-    ALTER TABLE `bpmcore`.`systtablefields`  DROP FOREIGN KEY `TableFieldIDnTfd`;
+    ALTER TABLE `systemsdb`.`systcompanies`  DROP FOREIGN KEY `BusinessUnitIDnCmp`;
+    ALTER TABLE `systemsdb`.`systtablefields`  DROP FOREIGN KEY `TableFieldIDnTfd`;
+        
+    ALTER TABLE `systemsdb`.`bpmfoutentity`  DROP FOREIGN KEY `EntityIDnEnt`;
+    ALTER TABLE `systemsdb`.`bpmfoutentitystructure`  DROP FOREIGN KEY `FieldPropertiyIDnFpt`;
+    ALTER TABLE `systemsdb`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `FieldIDnEdv`;
+    ALTER TABLE `systemsdb`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `EntityIDnEdv`;
+    ALTER TABLE `systemsdb`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `DefaultVersionIDnEdv`;    
+    ALTER TABLE `systemsdb`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldIDnFpt`;    
+    ALTER TABLE `systemsdb`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldPropertyTypeIDnFpt`;     
+    ALTER TABLE `systemsdb`.`bpmfoutrootelement`  DROP FOREIGN KEY `RootElementIDnRel`;     
+    ALTER TABLE `systemsdb`.`bpmfoutrelationship`  DROP FOREIGN KEY `RelationshipIDnRsp`;     
+    ALTER TABLE `systemsdb`.`bpmfoutrelationship`  DROP FOREIGN KEY `DirectionIDnRsp`;     
+    ALTER TABLE `systemsdb`.`bpminftdefinition`  DROP FOREIGN KEY `DefinitionIDnDef`;         
+    ALTER TABLE `systemsdb`.`bpminftimport`  DROP FOREIGN KEY `ImportIDnDef`;         
     
-    
-    ALTER TABLE `bpmcore`.`bpmfoutentity`  DROP FOREIGN KEY `EntityIDnEnt`;
-    ALTER TABLE `bpmcore`.`bpmfoutentitystructure`  DROP FOREIGN KEY `FieldPropertiyIDnFpt`;
-    ALTER TABLE `bpmcore`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `FieldIDnEdv`;
-    ALTER TABLE `bpmcore`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `EntityIDnEdv`;
-    ALTER TABLE `bpmcore`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `DefaultVersionIDnEdv`;    
-    ALTER TABLE `bpmcore`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldIDnFpt`;    
-    ALTER TABLE `bpmcore`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldPropertyTypeIDnFpt`;     
-    ALTER TABLE `bpmcore`.`bpmfoutrootelement`  DROP FOREIGN KEY `RootElementIDnRel`;     
-    ALTER TABLE `bpmcore`.`bpmfoutrelationship`  DROP FOREIGN KEY `RelationshipIDnRsp`;     
-    ALTER TABLE `bpmcore`.`bpmfoutrelationship`  DROP FOREIGN KEY `DirectionIDnRsp`;     
-    ALTER TABLE `bpmcore`.`bpminftdefinition`  DROP FOREIGN KEY `DefinitionIDnDef`;         
-    ALTER TABLE `bpmcore`.`bpminftimport`  DROP FOREIGN KEY `ImportIDnDef`;         
-    
-
 -- After deleted the referenced, you can delete the table
-DROP TABLE IF EXISTS `bpmcore`.`bpmfoutbaseelement`;
+DROP TABLE IF EXISTS `systemsdb`.`baseelement_tbl`;
 
-CREATE TABLE `bpmfoutbaseelement` (
-	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,					-- Es el ID UniqueIdentifier, valor unico del registro
-	  `IDNum` int NOT NULL AUTO_INCREMENT,												-- Es el IDNum valor numerico incremental, valor unico del registro
-	  `IDName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,			-- Código en letras del ID
-	  `ScopeIDn` int NOT NULL,						-- Es el IDNum del Ambito de Aplicación / Tabla a la que pertenece el registro, numeros variales
-	  `BusinessUnitIDn` int NOT NULL,					-- Es el IDNum de la Unidad de Negocio de la Compania dueña del Registro, Scope = 25, numeros variales
-	  `LanguageIDn` int NOT NULL,					-- Es el IDNum del Idioma del Registro, Scope = 11 TSysLanguage, 652 English -- Codigo del idioma por defecto elegido. Este es el mismo durante todo el sistema.
-	  `IDCode` int NOT NULL,						-- Codigo numerico establecido por el usuario, permite organizar los contenidos de la tabla por rangos, se carga automaticamente si no se especifica
-	  `DefinitionIDn` smallint NOT NULL,					-- Es el IDNum del tipo de definicion del elemento en que lenguaje esta escrito, Scope = 23 tSisDefinition, 2070 bpmndefaultdefinition
-	  `InformationTypeIDn` smallint NOT NULL,				-- Es el IDNum del tipo de Informacion que representa el registro, Scope = 18 tSisInfoType, 381 Data, 382 Software = definición del código, bajo que estandar esta escrito. Define el tipo de dato que es el BaseElement, puede ser: Data (son los elementos reales que forman el sistema, los procesos, etc.), Software (es la estructura BMPN, XML, XSD).	
-	  `IDIsUsed` tinyint NOT NULL,					-- 1 = true, 0 = false
-	  `StateIDn` smallint NOT NULL,					-- Es el IDNum del estado del registro, Scope = 21 tSisState, 372 Ena, 373 Dis
-	  `CreatedByIDn` mediumint NOT NULL,				-- Es el IdNum del usuario que creo el registro, Scope = 231 UserTUser, numeros variales
-	  `LastModifiedByIDn` mediumint NOT NULL,				-- Es el IdNum del ultimo usuario que modifico el registro, Scope = 231 UserTUser, numeros variales
-	  `OwnerIDn` mediumint NOT NULL,					-- Es el IdNum del usuario dueño del registro, Scope = 231 UserTUser, numeros variales
-	  `DateCreated` datetime NOT NULL,					-- Es la fecha de creacion del registro
-	  `DateTimeStamp` timestamp NOT NULL,				-- Es la fecha de la ultima modificacion del registro
-	  `TzNameIDn` smallint NOT NULL,					-- Es el IDNum del Time Zone, Scope = 13 TimeZoneName, 1206 = America/Buenos_Aires, Tabla BpmfouTBaseElement [TzName] -- Define el Time Zone del UTC
-	  `TzOffset` smallint NOT NULL,					-- Es la diferencia horario entre el Zero Time Zone y la zona desde donde se modifico el registro
-	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,	-- Acumula el historico del registro
-	  PRIMARY KEY (`IDNum`),
-	  UNIQUE KEY `ID_UNIQUE` (`ID`) /*!80000 INVISIBLE */,
+CREATE TABLE `baseelement_tbl` (
+	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
+	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
+	  `IDName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The IDName is the user-readable code for the selected language.',
+	  `IDNameStructureIDn` int NOT NULL COMMENT 'The IDNameStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.',
+	  `ScopeIDn` int NOT NULL COMMENT 'The ScopeIDn is the IdNum of the Scope, the Name must be unique for the scope of application, usually a Table',
+	  `BusinessUnitIDn` int NOT NULL COMMENT 'The BusinessUnitIDn is the IdNum of the BusinessUnit to which the IDName is assigned',
+	  `LanguageIDn` int NOT NULL COMMENT 'The LanguageIDn is the IdNum of the language in which the Name is defined',
+	  `IDCode` int NOT NULL COMMENT 'The IDCode is the unique code of the record for a scope and company.',
+	  `DefinitionIDn` int NOT NULL COMMENT 'The DefinitionIDn is the IdNum of the element definition type.',
+	  `InformationTypeIDn` int NOT NULL COMMENT 'Then InformationTypeIDn is the IdNum of the type of information that the record represents.',
+	  `IDIsUsed` tinyint NOT NULL COMMENT 'The IDIsUsed determines if the registry is used or not.',
+	  `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
+	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
+	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
+	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner.',
+	  `DateCreated` datetime NOT NULL COMMENT 'The DateCreated is the record creation date with UTC.',
+	  `DateTimeStamp` timestamp NOT NULL COMMENT 'The DateTimeStamp is the date of the last modification of the record with UTC.',
+ 	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
+	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
+	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
+	  PRIMARY KEY (`IDNum`) COMMENT 'The sequence SysBaseElements_Tbl_seq generate the nextval',
+	  UNIQUE KEY `SbeUnique_ID` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier',
 	  UNIQUE KEY `IDNum_UNIQUE` (`IDNum`),
-	  UNIQUE KEY `IDNameScopeCompLang_UNIQUE` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`),
-	  UNIQUE KEY `IDScopeIDCode_UNIQUE` (`ScopeIDn`,`BusinessUnitIDn`,`IDCode`),
+	  UNIQUE KEY `SbeUnique_IDNameScopeBusUnitLang` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`) COMMENT 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.',
+	  UNIQUE KEY `SbeUnique_IDCodeIDScopeIDBusUnit` (`BusinessUnitIDn`,`ScopeIDn`, `IDCode`) COMMENT 'A CodeId can be unique for a ScopeId and for a BusinessUnitId.',
 	  KEY `ID_idx` (`ID`) /*!80000 INVISIBLE */,
       KEY `IDNum_idx` (`IDNum`) /*!80000 INVISIBLE */,
       KEY `BusinessUnitIDn_idx` (`BusinessUnitIDn`),
@@ -78,33 +97,43 @@ CREATE TABLE `bpmfoutbaseelement` (
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-    COMMENT='contiene la informacion generada por los usuario del sistema, todos los codigos que se utilizaran en las distintas tablas, 
-			 (excepto los comentarios que no se cargan aqui), 
-             cada codigo ingresado se le genera un ID (uniqueidentifier) y un valor unico autonumerico.
-             Usualmente todos los IDNum se crean en la tabla bpmfoutbaseelement unica para todas las bases de datos
-			 es unico para un:
-					Name 		(es el codigo legible por el usuario, para esa compania, idioma y scope es unico)
-					Scope		(es el IDNum del Ambito de Aplicación / Tabla a la que pertenece el registro)
-					BusinessUnit	(es el IDNum de la Unidad de Negocio de la Compania dueña del Registro)
-					Language	(el idioma predeterminado), vinculo con la tabla bpmfoutbaseelement unica para todas las bases de datos
-			 de esta manera nos aseguramos de no duplicar informacion
-			 El resto de las tablas tienen un vinculo a esta tabla para identificar que tipo de elemento es.
+    COMMENT='Contains the diccionary of all system elements of the Microservice.
+The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
+In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
+To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+  IDName     		-> is the readable code by the user.
+  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
+  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
+  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
+Important: when you create the element/object in this tabel, this element do not exits for the software. This table is like a dictionary.
+			Only exist when you create the code in the specific table.
+	Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
+Modification Rules:
+	You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
+	Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
+	If you want to change the code and it is in many places, the system must generate another code for the new value
+	To change this value, it must be done by the administrator. 
+	It is best to never change it.
 			 ';
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - bpmfoutbaseelement
+-- Create the Trigger Before Insert - baseelement_tbl
 -- en caso que desde Java no pasen la informacion de estos campos,
 -- establece el valor del ID uniqueidentifier, el IDCode, el DateCreated y el DateTimeStamp
-USE bpmcore;
-DROP TRIGGER IF EXISTS `bpmcore`.`bpmfoutbaseelement_BEFORE_INSERT`;
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeInsert_Trg`;
 DELIMITER $$
-USE `bpmcore`$$
-CREATE DEFINER=`root`@`localhost` TRIGGER `bpmfoutbaseelement_BEFORE_INSERT` BEFORE INSERT ON `bpmfoutbaseelement` FOR EACH ROW BEGIN
+USE `systemsdb`$$
+CREATE DEFINER=`root`@`localhost` TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `baseelement_tbl` FOR EACH ROW BEGIN
 	IF new.ID IS NULL OR new.ID = '' THEN
-		SET new.ID = uuid();				-- Valor UniqueIdentifier
+		SET new.ID = uuid();				-- UniqueIdentifier Value
 	END IF;
     IF new.IDCode IS NULL OR new.IDCode = 0 OR new.IDCode = '' THEN
-		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `bpmcore`.`bpmfoutbaseelement` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
+		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `systemsdb`.`baseelement_tbl` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
         -- Asigna el valor del IDCode en forma incremental para esa empresa y scope, ya que no puede duplicarse
 	END IF;
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
@@ -113,45 +142,53 @@ END$$
 DELIMITER ;
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - bpmfoutbaseelement
+-- Create the Trigger Before Update - baseelement_tbl
 -- en caso que desde Java no pasen la informacion de estos campos,
 -- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
-USE bpmcore;
-DROP TRIGGER IF EXISTS `bpmcore`.`bpmfoutbaseelement_BEFORE_UPDATE`;
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`baseelement_tbl_BEFORE_UPDATE`;
 DELIMITER $$
-USE `bpmcore`$$
-CREATE DEFINER=`root`@`localhost` TRIGGER `bpmfoutbaseelement_BEFORE_UPDATE` BEFORE UPDATE ON `bpmfoutbaseelement` FOR EACH ROW BEGIN
+USE `systemsdb`$$
+CREATE DEFINER=`root`@`localhost` TRIGGER `baseelement_tbl_BEFORE_UPDATE` BEFORE UPDATE ON `baseelement_tbl` FOR EACH ROW BEGIN
+	DECLARE v_TableHistory text;
+	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
     IF new.TableHistory = 'SetNull' THEN
 		SET new.TableHistory = null;
     ELSEIF new.TableHistory = 'SetOff' THEN
 		SET new.TableHistory = old.TableHistory;
     ELSE
-		SET new.TableHistory = concat(old.IDNum,"†",
-					-- En caso que el valor nuevo (New) sea Igual al valor historico (Old), 
-						-- se pone vacio "", ya que el valor vigente sigue en el registro
-					-- En caso que el valor nuevo (New) sea distinto al valor historico (Old), 
-						-- se pone el valor que se va a reemplazar que es el Old.
-			IF(new.IDName = old.IDName,"",old.IDName),"†",
-			IF(new.ScopeIDn = old.ScopeIDn,"",old.ScopeIDn),"†",
-			IF(new.BusinessUnitIDn = old.BusinessUnitIDn,"",old.BusinessUnitIDn),"†",
-			IF(new.LanguageIDn = old.LanguageIDn,"",old.LanguageIDn),"†",
-                    IF(new.IDCode = old.IDCode,"",old.IDCode),"†",
-                    IF(new.DefinitionIDn = old.DefinitionIDn,"",old.DefinitionIDn),"†",
-                    IF(new.InformationTypeIDn = old.InformationTypeIDn,"",old.InformationTypeIDn),"†",
-                    IF(new.IDIsUsed = old.IDIsUsed,"",old.IDIsUsed),"†",
-                    IF(new.StateIDn = old.StateIDn,"",old.StateIDn),"†",
-                    IF(new.CreatedByIDn = old.CreatedByIDn,"",old.CreatedByIDn),"†",
-                    IF(new.LastModifiedByIDn = old.LastModifiedByIDn,"",old.LastModifiedByIDn),"†",
-                    IF(new.OwnerIDn = old.OwnerIDn,"",old.OwnerIDn),"†",
-                    IF(new.DateCreated = old.DateCreated,"",old.DateCreated),"†",
-                    old.DateTimeStamp,"†",
-                    IF(new.TzNameIDn = old.TzNameIDn,"",old.TzNameIDn),"†",
-                    IF(new.TzOffset = old.TzOffset,"",old.TzOffset),
-				IFNULL(concat("‡",old.TableHistory),""));
+		-- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
+		-- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
+		SET v_TableHistoryOld := old.TableHistory;
+		SET v_TableHistory = '';
+		-- IDNum, this value never changes.
+		-- ID, this value never changes.
+		IF NEW.IDName <> OLD.IDName THEN SET v_TableHistory := OLD.IDName; ELSE SET v_TableHistory := '†'; END IF;
+		IF NEW.IDNameStructureIDn <> OLD.IDNameStructureIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDNameStructureIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.ScopeIDn <> OLD.ScopeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.ScopeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.BusinessUnitIDn <> OLD.BusinessUnitIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.BusinessUnitIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.LanguageIDn <> OLD.LanguageIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LanguageIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.IDCode <> OLD.IDCode THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDCode); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.DefinitionIDn <> OLD.DefinitionIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.DefinitionIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.InformationTypeIDn <> OLD.InformationTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.InformationTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.IDIsUsed <> OLD.IDIsUsed THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDIsUsed); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',NEW.DateCreated); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.DateTimeStamp <> OLD.DateTimeStamp THEN SET v_TableHistory := concat(v_TableHistory,'†',OLD.DateTimeStamp); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzNameIDn <> OLD.TzNameIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzNameIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzOffset <> OLD.TzOffset THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzOffset); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			SET NEW.TableHistory := v_TableHistory;
+		ELSE
+			SET NEW.TableHistory := concat(v_TableHistory,'‡',v_TableHistory);
 		END IF;
+	END IF;
 END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `bpmcore`.`bpmfoutbaseelement`;
+SELECT * FROM `systemsdb`.`baseelement_tbl`;
