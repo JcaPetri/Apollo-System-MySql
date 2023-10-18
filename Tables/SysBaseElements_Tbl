@@ -146,10 +146,10 @@ DELIMITER ;
 -- en caso que desde Java no pasen la informacion de estos campos,
 -- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`baseelement_tbl_BEFORE_UPDATE`;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
-CREATE DEFINER=`root`@`localhost` TRIGGER `baseelement_tbl_BEFORE_UPDATE` BEFORE UPDATE ON `baseelement_tbl` FOR EACH ROW BEGIN
+CREATE DEFINER=`root`@`localhost` TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `baseelement_tbl` FOR EACH ROW BEGIN
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
