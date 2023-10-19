@@ -38,6 +38,7 @@
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced baseelement_tbl Tables:
+/*
     ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
     ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `LanguageIDnBel`;
     ALTER TABLE `systemsdb`.`bpmfoutdocumentation`  DROP FOREIGN KEY `DocumentationIDnDc`;
@@ -58,7 +59,8 @@ USE systemsdb;
     ALTER TABLE `systemsdb`.`bpmfoutrelationship`  DROP FOREIGN KEY `DirectionIDnRsp`;     
     ALTER TABLE `systemsdb`.`bpminftdefinition`  DROP FOREIGN KEY `DefinitionIDnDef`;         
     ALTER TABLE `systemsdb`.`bpminftimport`  DROP FOREIGN KEY `ImportIDnDef`;         
-    
+*/
+
 -- After deleted the referenced, you can delete the table
 DROP TABLE IF EXISTS `systemsdb`.`baseelement_tbl`;
 
