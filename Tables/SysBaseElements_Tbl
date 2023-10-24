@@ -38,28 +38,7 @@
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced baseelement_tbl Tables:
-/*
-    ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
-    ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `LanguageIDnBel`;
-    ALTER TABLE `systemsdb`.`bpmfoutdocumentation`  DROP FOREIGN KEY `DocumentationIDnDc`;
-    ALTER TABLE `systemsdb`.`bpmfoutdocumentation`  DROP FOREIGN KEY `LanguageIDnDc`;
-    
-    ALTER TABLE `systemsdb`.`systcompanies`  DROP FOREIGN KEY `BusinessUnitIDnCmp`;
-    ALTER TABLE `systemsdb`.`systtablefields`  DROP FOREIGN KEY `TableFieldIDnTfd`;
-        
-    ALTER TABLE `systemsdb`.`bpmfoutentity`  DROP FOREIGN KEY `EntityIDnEnt`;
-    ALTER TABLE `systemsdb`.`bpmfoutentitystructure`  DROP FOREIGN KEY `FieldPropertiyIDnFpt`;
-    ALTER TABLE `systemsdb`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `FieldIDnEdv`;
-    ALTER TABLE `systemsdb`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `EntityIDnEdv`;
-    ALTER TABLE `systemsdb`.`bpmfoutentitydefaultvalues`  DROP FOREIGN KEY `DefaultVersionIDnEdv`;    
-    ALTER TABLE `systemsdb`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldIDnFpt`;    
-    ALTER TABLE `systemsdb`.`bpmfoutfieldproperties`  DROP FOREIGN KEY `FieldPropertyTypeIDnFpt`;     
-    ALTER TABLE `systemsdb`.`bpmfoutrootelement`  DROP FOREIGN KEY `RootElementIDnRel`;     
-    ALTER TABLE `systemsdb`.`bpmfoutrelationship`  DROP FOREIGN KEY `RelationshipIDnRsp`;     
-    ALTER TABLE `systemsdb`.`bpmfoutrelationship`  DROP FOREIGN KEY `DirectionIDnRsp`;     
-    ALTER TABLE `systemsdb`.`bpminftdefinition`  DROP FOREIGN KEY `DefinitionIDnDef`;         
-    ALTER TABLE `systemsdb`.`bpminftimport`  DROP FOREIGN KEY `ImportIDnDef`;         
-*/
+ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;     
 
 -- After deleted the referenced, you can delete the table
 DROP TABLE IF EXISTS `systemsdb`.`baseelement_tbl`;
@@ -85,17 +64,15 @@ CREATE TABLE `baseelement_tbl` (
  	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
 	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
 	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY (`IDNum`) COMMENT 'The sequence SysBaseElements_Tbl_seq generate the nextval',
-	  UNIQUE KEY `SbeUnique_ID` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier',
-	  UNIQUE KEY `IDNum_UNIQUE` (`IDNum`),
-	  UNIQUE KEY `SbeUnique_IDNameScopeBusUnitLang` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`) COMMENT 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.',
-	  UNIQUE KEY `SbeUnique_IDCodeIDScopeIDBusUnit` (`BusinessUnitIDn`,`ScopeIDn`, `IDCode`) COMMENT 'A CodeId can be unique for a ScopeId and for a BusinessUnitId.',
-	  KEY `ID_idx` (`ID`) /*!80000 INVISIBLE */,
-      KEY `IDNum_idx` (`IDNum`) /*!80000 INVISIBLE */,
-      KEY `BusinessUnitIDn_idx` (`BusinessUnitIDn`),
-	  KEY `IDCode_idx` (`IDCode`) /*!80000 INVISIBLE */,
-	  KEY `IDIsUsed_idx` (`IDIsUsed`),
-	  KEY `IDCompScope_idx` (`BusinessUnitIDn`,`ScopeIDn`)
+	  PRIMARY KEY `ID_SbePriKey` (`IDNum`) COMMENT 'The sequence SysBaseElements_Tbl_seq generate the nextval',
+	  UNIQUE KEY `ID_SbeUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
+	  UNIQUE KEY `IDNum_SbeUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
+	  UNIQUE KEY `IDNameScopeBusUnitLang_SbeUnique` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`) COMMENT 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.',
+	  UNIQUE KEY `IDCodeIDScopeIDBusUnit_SbeUnique` (`BusinessUnitIDn`,`ScopeIDn`, `IDCode`) COMMENT 'A IDCode must be unique for a ScopeId and for a BusinessUnitId.',
+	  KEY `ID_SbeIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
+	  KEY `IDNum_SbeIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
+	  KEY `IDCode_SbeIdx` (`IDCode`) /*!80000 INVISIBLE */ COMMENT 'The IDCode must be indexed, because it works like IDNum.',
+	  KEY `IDBusUnitScop_SbeIdx` (`IDIsUsed` ASC, `BusinessUnitIDn` ASC, `ScopeIDn`ASC) COMMENT 'To optimize the search of Business Tables.'
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -124,19 +101,19 @@ Modification Rules:
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the Trigger Before Insert - baseelement_tbl
--- en caso que desde Java no pasen la informacion de estos campos,
--- establece el valor del ID uniqueidentifier, el IDCode, el DateCreated y el DateTimeStamp
 USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 CREATE DEFINER=`root`@`localhost` TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `baseelement_tbl` FOR EACH ROW BEGIN
+	-- In the case, which the request do not give this value, MySql created it.
+	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
-		SET new.ID = uuid();				-- UniqueIdentifier Value
+		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
     IF new.IDCode IS NULL OR new.IDCode = 0 OR new.IDCode = '' THEN
 		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `systemsdb`.`baseelement_tbl` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
-        -- Asigna el valor del IDCode en forma incremental para esa empresa y scope, ya que no puede duplicarse
+        -- Assign the numeric auto-incremental IDCode for this ScopeIDn and BusinessUnitIDn, because this number must be unique.
 	END IF;
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
