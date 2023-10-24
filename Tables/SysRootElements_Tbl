@@ -6,12 +6,12 @@
 		ID	--> is the uniqueidentifier auto generated.
 		IDNum	--> is the autoincrement number auto generated.
 		This table has its own key only for update it. 
-		The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+		The system do not use this key because, here we only enable the element to a Microservice and BusinessUnit.
 	The unique Key is the union of:
 		RootElementIDn 		--> the IdNum of the entity
 		MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
 		BusinessUnitIDn		--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
-	Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
+	Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can not use it.
 			 To make real and enable these values, we must to create a specific table for its. 
 			 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
 	Tips:
@@ -32,7 +32,7 @@ USE systemsdb;
 -- Second create the SysRootElements_Tbl table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Table: public.SysRootElements_Tbl
-DROP TABLE IF EXISTS public."SysRootElements_Tbl" CASCADE;
+DROP TABLE IF EXISTS `systemsdb`.`SysRootElements_Tbl`;
 
 CREATE TABLE `SysRootElements_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
@@ -56,7 +56,7 @@ CREATE TABLE `SysRootElements_Tbl` (
 	  KEY `ID_SreIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SreIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `RootEleMicroBusUnit_SreIdx` (`RootElementIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
-	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`baseelement_tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE COMMENT 'Match the ID elements with their dictionary.'
+	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`baseelement_tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -66,12 +66,12 @@ CREATE TABLE `SysRootElements_Tbl` (
 		ID	--> is the uniqueidentifier auto generated.
 		IDNum	--> is the autoincrement number auto generated.
 		This table has its own key only for update it. 
-		The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+		The system do not use this key because, here we only enable the element to a Microservice and BusinessUnit.
 	The unique Key is the union of:
 		RootElementIDn 		--> the IdNum of the entity
 		MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
 		BusinessUnitIDn		--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
-	Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
+	Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can not use it.
 			 To make real and enable these values, we must to create a specific table for its. 
 			 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
 	Tips:
