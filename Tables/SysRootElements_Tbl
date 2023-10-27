@@ -84,7 +84,8 @@ USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysRootElementsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
-CREATE DEFINER=`root`@`localhost` TRIGGER `SysRootElementsBeforeInsert_Trg` BEFORE INSERT ON `SysRootElements_Tbl` FOR EACH ROW BEGIN
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysRootElementsBeforeInsert_Trg` BEFORE INSERT ON `SysRootElements_Tbl` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
@@ -102,7 +103,8 @@ USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysRootElementsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
-CREATE DEFINER=`root`@`localhost` TRIGGER `SysRootElementsBeforeUpdate_Trg` BEFORE UPDATE ON `SysRootElements_Tbl` FOR EACH ROW BEGIN
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysRootElementsBeforeUpdate_Trg` BEFORE UPDATE ON `SysRootElements_Tbl` FOR EACH ROW BEGIN
 	-- Create the function to set the new datetimestamp and the history of the record.
 	-- This funtion is used by the SysRootElements_Tbl table before update trigger.
 	DECLARE v_TableHistory text;
