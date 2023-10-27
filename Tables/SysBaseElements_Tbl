@@ -105,7 +105,8 @@ USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
-CREATE DEFINER=`root`@`localhost` TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `baseelement_tbl` FOR EACH ROW BEGIN
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `baseelement_tbl` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
@@ -128,7 +129,8 @@ USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
-CREATE DEFINER=`root`@`localhost` TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `baseelement_tbl` FOR EACH ROW BEGIN
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `baseelement_tbl` FOR EACH ROW BEGIN
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
