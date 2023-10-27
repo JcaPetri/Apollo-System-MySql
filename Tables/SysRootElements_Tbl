@@ -56,7 +56,7 @@ CREATE TABLE `SysRootElements_Tbl` (
 	  KEY `ID_SreIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SreIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `RootEleMicroBusUnit_SreIdx` (`RootElementIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
-	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`baseelement_tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`BaseElement_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
