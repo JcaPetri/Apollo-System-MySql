@@ -38,7 +38,8 @@
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced baseelement_tbl Tables:
-ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;     
+ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysEntities_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`;     
 
 -- After deleted the referenced, you can delete the table
 DROP TABLE IF EXISTS `systemsdb`.`baseelement_tbl`;
