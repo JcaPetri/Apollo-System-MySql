@@ -1,0 +1,147 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysEntities_Tbl table
+/*
+Contains the entities of the system, they can be database tables or java classes.
+The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	EntityIDn 		--> the IdNum of the entity
+	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
+	BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+Important:
+	The Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
+	The data is created in the BaseElement_Tbl and is the same to all the BusinessUnit.
+	When I create the entity, I define the business unit owner and the microservice it belongs to.
+	That is the reason why you generate a new ID and IdNum for this table. 
+Kafka/rabbitMq Topic:
+	The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.	
+*/
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First Delete the table SysEntities_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced baseelement_tbl Tables:
+-- ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the SysEntities_Tbl table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysEntities_Tbl
+DROP TABLE IF EXISTS `systemsdb`.`SysEntities_Tbl`;
+
+CREATE TABLE `SysEntities_Tbl` (
+	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
+	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
+	  `EntityIDn` int NOT NULL COMMENT 'The EntityIDn is the IDNum of the entity (SisEntity or SisTable), which is enabled for this microservice and business unit.',
+	  `EntityTypeIDn` integer NOT NULL COMMENT 'The EntityTypeIDn is the IDNum of the entity type, SisEntity OR SisTable.',
+      `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
+	  `BusinessUnitIDn` int NOT NULL COMMENT 'The BusinessUnitIDn is the IdNum of the BusinessUnit to which the IDName is assigned',
+      `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
+	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
+	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
+	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner.',
+	  `DateCreated` datetime NOT NULL COMMENT 'The DateCreated is the record creation date with UTC.',
+	  `DateTimeStamp` timestamp NOT NULL COMMENT 'The DateTimeStamp is the date of the last modification of the record with UTC.',
+ 	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
+	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
+	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
+	  PRIMARY KEY `IDNum_SenPrikey` (`IDNum`) COMMENT 'The sequence SysEntities_Tbl generate the nextval',
+	  UNIQUE KEY `ID_SenUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
+	  UNIQUE KEY `IDNum_SenUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
+	  UNIQUE KEY `IDnEntityMicroServBusinessUnit_SenUnique` (`EntityIDn`,`MicroserviceIDn`, `BusinessUnitIDn`) COMMENT 'The IDNum must be unique for the Microservice and BusinessUnit.',
+	  KEY `ID_SenIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
+      KEY `IDNum_SenIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
+      KEY `EntityMicroBusUnit_SenIdx` (`EntityIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
+	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`baseelement_tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB 
+	AUTO_INCREMENT=0 
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+    COMMENT='Contains the entities of the system, they can be database tables or java classes.
+The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	EntityIDn 		--> the IdNum of the entity
+	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
+	BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+Important:
+	The Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
+	The data is created in the BaseElement_Tbl and is the same to all the BusinessUnit.
+	When I create the entity, I define the business unit owner and the microservice it belongs to.
+	That is the reason why you generate a new ID and IdNum for this table. 
+Kafka/rabbitMq Topic:
+	The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.';
+
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Insert - SysEntities_Tbl
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysEntitiesBeforeInsert_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysEntitiesBeforeInsert_Trg` BEFORE INSERT ON `SysEntities_Tbl` FOR EACH ROW BEGIN
+	-- In the case, which the request do not give this value, MySql created it.
+	-- Set the ID uniqueidentifier, DateCreated and DateTimeStamp
+	IF new.ID IS NULL OR new.ID = '' THEN
+		SET new.ID = uuid();				-- Define the UniqueIdentifier Value
+	END IF;
+	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+END$$
+DELIMITER ;
+
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Update - SysEntities_Tbl
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysEntitiesBeforeUpdate_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysEntitiesBeforeUpdate_Trg` BEFORE UPDATE ON `SysEntities_Tbl` FOR EACH ROW BEGIN
+	-- Create the function to set the new datetimestamp and the history of the record.
+	-- This funtion is used by the SysEntities_Tbl table before update trigger.
+	DECLARE v_TableHistory text;
+	DECLARE v_TableHistoryOld text;
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+    IF new.TableHistory = 'SetNull' THEN
+		SET new.TableHistory = null;
+    ELSEIF new.TableHistory = 'SetOff' THEN
+		SET new.TableHistory = old.TableHistory;
+    ELSE
+		-- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
+		-- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
+		SET v_TableHistoryOld := old.TableHistory;
+		SET v_TableHistory = '';
+		-- IDNum, this value never changes.
+		-- ID, this value never changes.
+    IF NEW.EntityIDn <> OLD.EntityIDn THEN SET v_TableHistory := OLD.EntityIDn; ELSE SET v_TableHistory := '†'; END IF;
+    IF NEW.EntityTypeIDn <> OLD.EntityTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.EntityTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.MicroserviceIDn <> OLD.MicroserviceIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.MicroserviceIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.BusinessUnitIDn <> OLD.BusinessUnitIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.BusinessUnitIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',NEW.DateCreated); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.DateTimeStamp <> OLD.DateTimeStamp THEN SET v_TableHistory := concat(v_TableHistory,'†',OLD.DateTimeStamp); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzNameIDn <> OLD.TzNameIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzNameIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzOffset <> OLD.TzOffset THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzOffset); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			SET NEW.TableHistory := v_TableHistory;
+		ELSE
+			SET NEW.TableHistory := concat(v_TableHistory,'‡',v_TableHistory);
+		END IF;
+	END IF;
+END$$
+DELIMITER ;
+
+-- Lista los datos de la tabla
+SELECT * FROM `systemsdb`.`SysEntities_Tbl`;
