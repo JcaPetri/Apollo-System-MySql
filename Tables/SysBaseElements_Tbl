@@ -34,17 +34,17 @@
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Delete the table baseelement_tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+-- Delete the table BaseElement_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced baseelement_tbl Tables:
+-- The referenced BaseElement_Tbl Tables:
 ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;
 ALTER TABLE `systemsdb`.`SysEntities_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`;     
 
 -- After deleted the referenced, you can delete the table
-DROP TABLE IF EXISTS `systemsdb`.`baseelement_tbl`;
+DROP TABLE IF EXISTS `systemsdb`.`BaseElement_Tbl`;
 
-CREATE TABLE `baseelement_tbl` (
+CREATE TABLE `BaseElement_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
 	  `IDName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The IDName is the user-readable code for the selected language.',
@@ -101,20 +101,20 @@ Modification Rules:
 			 ';
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - baseelement_tbl
+-- Create the Trigger Before Insert - BaseElement_Tbl
 USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `baseelement_tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `BaseElement_Tbl` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
     IF new.IDCode IS NULL OR new.IDCode = 0 OR new.IDCode = '' THEN
-		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `systemsdb`.`baseelement_tbl` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
+		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `systemsdb`.`BaseElement_Tbl` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
         -- Assign the numeric auto-incremental IDCode for this ScopeIDn and BusinessUnitIDn, because this number must be unique.
 	END IF;
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
@@ -123,7 +123,7 @@ END$$
 DELIMITER ;
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - baseelement_tbl
+-- Create the Trigger Before Update - BaseElement_Tbl
 -- en caso que desde Java no pasen la informacion de estos campos,
 -- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
 USE systemsdb;
@@ -131,7 +131,7 @@ DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `baseelement_tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `BaseElement_Tbl` FOR EACH ROW BEGIN
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
@@ -173,4 +173,4 @@ END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`baseelement_tbl`;
+SELECT * FROM `systemsdb`.`BaseElement_Tbl`;
