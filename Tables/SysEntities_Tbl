@@ -57,7 +57,7 @@ CREATE TABLE `SysEntities_Tbl` (
 	  KEY `ID_SenIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SenIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `EntityMicroBusUnit_SenIdx` (`EntityIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
-	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`baseelement_tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`BaseElement_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
