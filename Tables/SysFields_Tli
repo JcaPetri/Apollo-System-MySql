@@ -1,18 +1,15 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysEntityFields_Tbl table
-/*
-This is a List Table that contains the fields or the columns of the entities. 
-Enable the IDNum element to a Microservice and BusinessUnit.
-The fields exits to the entity, since you create it in this table. The information, of what are they, are in the SysSysBaseElements_Tbl table.
+-- Create the SysFields_Tli table
+/*This is a List Table that contains the fields or the columns of the system. Enable the IDNum element to a Microservice.
+The fields exits to the Microservice, since you create it in this table. The information, of what are they, are in the SysBaseElement_Tbl table.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable one field/column to a Microservice and BusinessUnit.
+	The system don't use this key because, here we only enable one field/column to a Microservice.
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
-	BusinessUnitIDn	--> The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.
 Common Field/Columns for all tables
 	The objective of these are to store critical information for the system and the record history.
 		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -26,7 +23,7 @@ Common Field/Columns for all tables
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- First Delete the table SysEntityFields_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+-- First Delete the table SysEntityFields_Tli if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced SysBaseElements_Tbl Tables:
@@ -34,17 +31,17 @@ USE systemsdb;
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Second create the SysEntityFields_Tbl table
+-- Second create the SysEntityFields_Tli table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysEntityFields_Tbl
-DROP TABLE IF EXISTS `systemsdb`.`SysEntityFields_Tbl`;
+-- Table: public.SysEntityFields_Tli
+DROP TABLE IF EXISTS `systemsdb`.`SysEntityFields_Tli`;
 
-CREATE TABLE `SysEntityFields_Tbl` (
+CREATE TABLE `SysEntityFields_Tli` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
       `FieldIDn` int NOT NULL COMMENT 'The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.',
+      `FieldTypeIDn` int NOT NULL COMMENT 'The FieldTypeIDn is the IDNum of the field type, Column or Field. Link with the diccionary table - SysBaseElement.',
       `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
-	  `BusinessUnitIDn` int NOT NULL COMMENT 'The BusinessUnitIDn is the IdNum of the BusinessUnit to which the IDName is assigned',
       `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
 	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
 	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
@@ -54,29 +51,28 @@ CREATE TABLE `SysEntityFields_Tbl` (
  	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
 	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
 	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY `IDNum_SefPrikey` (`IDNum`) COMMENT 'The sequence SysEntityFields_Tbl generate the nextval',
+	  PRIMARY KEY `IDNum_SefPrikey` (`IDNum`) COMMENT 'The sequence SysEntityFields_Tli generate the nextval',
 	  UNIQUE KEY `ID_SefUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
 	  UNIQUE KEY `IDNum_SefUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
-	  UNIQUE KEY `IDnFieldMicroServBusinessUnit_SefUnique` (`FieldIDn`,`MicroserviceIDn`, `BusinessUnitIDn`) COMMENT 'The IDNum must be unique for the Microservice and BusinessUnit.',
+	  UNIQUE KEY `IDnFieldMicroServ_SefUnique` (`FieldIDn`,`MicroserviceIDn`) COMMENT 'The IDNum must be unique for the Microservice.',
 	  KEY `ID_SefIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SefIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-      KEY `FieldMicroBusUnit_SefIdx` (`FieldIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
-	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+      KEY `FieldMicroServ_SefIdx` (`FieldIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Microservices Tables.',
+	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-    COMMENT='This is a List Table that contains the fields or the columns of the entities. 
-Enable the IDNum element to a Microservice and BusinessUnit.
-The fields exits to the entity, since you create it in this table. The information, of what are they, are in the SysSysBaseElements_Tbl table.
+    COMMENT='This is a List Table that contains the fields or the columns of the system. Enable the IDNum element to a Microservice.
+The fields exits to the Microservice, since you create it in this table. The information, of what are they, are in the SysBaseElement_Tbl table.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable one field/column to a Microservice and BusinessUnit.
+	The system don't use this key because, here we only enable one field/column to a Microservice.
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
-	BusinessUnitIDn	--> The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.
 Common Field/Columns for all tables
 	The objective of these are to store critical information for the system and the record history.
 		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -89,13 +85,13 @@ Common Field/Columns for all tables
 
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - SysEntityFields_Tbl
+-- Create the Trigger Before Insert - SysEntityFields_Tli
 USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysEntityFieldsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysEntityFieldsBeforeInsert_Trg` BEFORE INSERT ON `SysEntityFields_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysEntityFieldsBeforeInsert_Trg` BEFORE INSERT ON `SysEntityFields_Tli` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
@@ -108,15 +104,15 @@ DELIMITER ;
 
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - SysEntityFields_Tbl
+-- Create the Trigger Before Update - SysEntityFields_Tli
 USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysEntityFieldsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysEntityFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysEntityFields_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysEntityFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysEntityFields_Tli` FOR EACH ROW BEGIN
 	-- Create the function to set the new datetimestamp and the history of the record.
-	-- This funtion is used by the SysEntityFields_Tbl table before update trigger.
+	-- This funtion is used by the SysEntityFields_Tli table before update trigger.
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
@@ -132,8 +128,8 @@ CREATE TRIGGER `SysEntityFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysEntityFiel
 		-- IDNum, this value never changes.
 		-- ID, this value never changes.
         IF NEW.FieldIDn <> OLD.FieldIDn THEN SET v_TableHistory := OLD.FieldIDn; ELSE SET v_TableHistory := '†'; END IF;
+        IF NEW.FieldTypeIDn <> OLD.FieldTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.MicroserviceIDn <> OLD.MicroserviceIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.MicroserviceIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.BusinessUnitIDn <> OLD.BusinessUnitIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.BusinessUnitIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
@@ -152,4 +148,4 @@ END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`SysEntityFields_Tbl`;
+SELECT * FROM `systemsdb`.`SysEntityFields_Tli`;
