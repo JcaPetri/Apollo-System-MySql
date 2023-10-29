@@ -17,7 +17,7 @@ USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced SysBaseElements_Tbl Tables:
 ALTER TABLE `systemsdb`.`SysCompanyMicroservice_Tbl`  DROP FOREIGN KEY `CompanyIDn_Rel`;
-ALTER TABLE `systemsdb`.`SysCompanyRelations_Tbl`  DROP FOREIGN KEY `CompanyIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysCompanyRelations_Tbl`  DROP FOREIGN KEY `CompanyRelationsIDn_Rel`;
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
