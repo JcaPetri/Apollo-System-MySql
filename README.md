@@ -35,14 +35,14 @@ Structure are as follows:
 		SysEntityFields_Tli	--> This is a List Table that contains the fields or the columns of the entities. Enable the IDNum element to a Microservice and BusinessUnit.
 		SysEntityStructures_Tbl	--> Contains each structure of the database tables or java classes.
 		SysEntityStructureFieldProperties_Tbl	--> Contains the properties of each field or column. They can be DataType, Lenght, etc.
-		SysEntityStructureFieldDefaultValues_Tbl	--> Contains the default value of each field or column. When you set a value for a column, if the user don't enter, the system get from this table the value to enter.
-	Used to create the Companies and their Structures
-		SysCompanies_Tbl	--> Contains the companies that use the software.
-		SysCompanyTree_Tbl	--> Contains the structure of each company. If you have a economic group in this table can build this structure. 
-		SysBusinessUnits_Tbl	--> Contains the business units that belong to the company.
-	Used to create the Microservices and Thiers Companies.
+		SysEntityStructureFieldDefaultValues_Tbl	--> Contains the default value of each field or column. When you set a value for a column, if the user does not enter, the system get from this table the value to enter.
+	Used to create the Microservices.
 		SysMicroservices_Tbl	--> Contains the microservices that use the software.
-		SysMicroservicesCompanies_Tbl	--> Contains the relations between the Microservices and Companies. 
+    Used to create the Companies and their Structures
+		SysCompanies_Tbl	--> Contains the companies that use the software.
+		SysCompanyRelations_Tbl --> Contains the relations between companies. If you have a economic group in this table can build this structure.
+  		SysCompanyMicroservice_Tbl --> Contains the relation between Companies and Microservices.
+
 
 ========================================================================================================================================================================================
 Detailed explanation of each table.
@@ -61,7 +61,7 @@ Detailed explanation of each table.
 			  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
 			  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
 			  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-			Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
+			Important: when you create the element/object in this tabel, this element does not exits for the software. This table is like a dictionary.
 						Only exist when you create the code in the specific table.
 				Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
 			Modification Rules:
@@ -120,12 +120,12 @@ Detailed explanation of each table.
 		SysBaseElementComments_Tbl	
 			Contains one or more descriptions/comments/details/explains of each record of the diccionary.
 			It has a defined language, an order when there is more than one description, a type of text format (mimetype), a status and the date of the last update.
-			If the element has not been recorded in this table, it means the element hasn't clarifications.
+			If the element has not been recorded in this table, it means the element has not clarifications.
 			The key for each record:
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 			The unique Key is the union of:
-			  	This table haven't unique key because one IDNum can have none, one or more coments.
+			  	This table have not unique key because one IDNum can have none, one or more coments.
 			Common Field/Columns for all tables
 				The objective of these are to store critical information for the system and the record history.
 					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -142,9 +142,9 @@ Detailed explanation of each table.
  	Used to create the Companies
 		SysCompanies_Tbl
 			Contains the companies that use the software. 
-			The Companies exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+			The Companies exists since you create them in this table. Its information, of what are they, are in the SysBaseElements_Tbl table.
 			The key for each record:
-				This table hasn't its own key, because in this table you only enable the company to all the system.
+				This table has not its own key, because in this table you only enable the company to all the system.
 			The unique Key is the union of:
 				CompanyIDn		--> The Company can not be duplicated. Link with the SysBaseElements_Tbl.
 			Common Field/Columns for all tables
@@ -153,9 +153,9 @@ Detailed explanation of each table.
   	Used to create the Microservices
 		SysMicroservices_Tbl
 			Contains the microservices that use the software. 
-			The Microservices exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+			The Microservices exists since you create them in this table. Its information, of what are they, are in the SysBaseElements_Tbl table.
 			The key for each record:
-				This table hasn't its own key, because in this table you only enable the microservice to all the system.
+				This table has not its own key, because in this table you only enable the microservice to all the system.
 			The unique Key is the union of:
 				MicroserviceIDn		--> The Microservice can not be duplicated. Link with the SysCompanies_Tbl.
 			Common Field/Columns for all tables
@@ -169,11 +169,11 @@ Detailed explanation of each table.
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 				This table has its own key only for update it.
-				The system don't use this key because, here we only enable the element to a Microservice.
+				The system does not use this key because, here we only enable the element to a Microservice.
 			The unique Key is the union of:
 				RootElementIDn 		--> the IdNum of the entity
 				MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
-			Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
+			Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can not use it.
 					 To make real and enable these values, we must to create a specific table for its. 
 					 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
 			Common Field/Columns for all tables
@@ -197,7 +197,7 @@ Detailed explanation of each table.
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 				This table has its own key only for update it.
-				The system don't use this key because, here we only enable the element to a Microservice.
+				The system does not use this key because, here we only enable the element to a Microservice.
 			The unique Key is the union of:
 				EntityIDn 		--> the IdNum of the entity
 				MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
@@ -224,7 +224,7 @@ Detailed explanation of each table.
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 				This table has its own key only for update it.
-				The system don't use this key because, here we only enable one field/column to a Microservice.
+				The system does not use this key because, here we only enable one field/column to a Microservice.
 			The unique Key is the union of:
 				FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 				MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
