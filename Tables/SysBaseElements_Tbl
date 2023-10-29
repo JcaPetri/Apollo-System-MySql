@@ -12,7 +12,7 @@ The unique Key is the union of:
   ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
   BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
   LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
+Important: when you create the element/object in this tabel, this element does not exits for the software. This table is like a dictionary.
 			Only exist when you create the code in the specific table.
 	Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
 Modification Rules:
@@ -107,7 +107,7 @@ The unique Key is the union of:
   ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
   BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
   LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
+Important: when you create the element/object in this tabel, this element does not exits for the software. This table is like a dictionary.
 			Only exist when you create the code in the specific table.
 	Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
 Modification Rules:
