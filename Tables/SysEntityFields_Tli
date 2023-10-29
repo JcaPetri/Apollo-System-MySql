@@ -1,12 +1,14 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntityFields_Tbl table
 /*
-Contains the fields or the columns of the entities.
-The fields exits to the entity, since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+This is a List Table that contains the fields or the columns of the entities. 
+Enable the IDNum element to a Microservice and BusinessUnit.
+The fields exits to the entity, since you create it in this table. The information, of what are they, are in the SysSysBaseElements_Tbl table.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
-    This table has not its own key, because here we only enable one field/column to a Microservice and BusinessUnit.
+	This table has its own key only for update it.
+	The system don't use this key because, here we only enable one field/column to a Microservice and BusinessUnit.
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
@@ -27,8 +29,8 @@ Common Field/Columns for all tables
 -- First Delete the table SysEntityFields_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced baseelement_tbl Tables:
--- ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+-- The referenced SysBaseElements_Tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysBaseElements_Tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -59,16 +61,18 @@ CREATE TABLE `SysEntityFields_Tbl` (
 	  KEY `ID_SefIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SefIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `FieldMicroBusUnit_SefIdx` (`FieldIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
-	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`BaseElement_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-    COMMENT='Contains the fields or the columns of the entities.
-The fields exits to the entity, since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+    COMMENT='This is a List Table that contains the fields or the columns of the entities. 
+Enable the IDNum element to a Microservice and BusinessUnit.
+The fields exits to the entity, since you create it in this table. The information, of what are they, are in the SysSysBaseElements_Tbl table.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
-    This table has not its own key, because here we only enable one field/column to a Microservice and BusinessUnit.
+	This table has its own key only for update it.
+	The system don't use this key because, here we only enable one field/column to a Microservice and BusinessUnit.
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
