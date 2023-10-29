@@ -1,0 +1,227 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysEntityStructureFieldProperties_Tbl table
+/*Contains the properties of each column/table or field/entity.
+Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
+The key for each record:
+    ID		--> is the uniqueidentifier auto generated.
+    IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+    FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.
+    EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+                            The EntityStructureIDn has a FieldIDn + EntityIDn + MicroserviceIDn unique key.
+Common Field/Columns for all tables
+    The objective of these are to store critical information for the system and the record history.
+        StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+        CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+        LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+        OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+        DateCreated			--> The DateCreated is the record creation datetime UTC.
+        DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+        TableHistory		-->	The TableHistory contain then change history of each column.
+The table operation:
+    To enter the data, you need the combination of two field, they are:
+        EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure (Microservice + Entity + Field). Link with the SysEntityStructurea_Tbl.
+        FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property (DataType, Length, IsNotNull, etc). Link with the SysBaseElementa_Tbl.
+        FieldValueTypeIDn	--> The FieldValueTypeIDn is the IDNum of the type property. ILink with the SysBaseElementa_Tbl.
+        FieldValue			--> The FieldValue is a numeric/text/etc value of the property, this value is not standard and can not be multilanguage.
+                                If the value is an IDNumType, the meaning of it, is in the SysBaseElments_Tbl.
+    Example: You have a Name column. You can set the datatype as string, and the length of the string in 20.
+        First you add one record to define the datatype.
+            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
+            FieldPropertyIDn = IDNum, represent DataType, the property of the field. Link with the SysBaseElementa_Tbl.
+            FieldValueTypeIDn = IDNum, represent table state data type. Link with the SysBaseElementa_Tbl.
+            FieldValue = 372, IDNum, represent enable value. Link with the SysBaseElementa_Tbl.
+        Second you add another record to define the lenght.
+            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
+            FieldPropertyIDn = IDNum, represent Length, the property of the field. Link with the SysBaseElementa_Tbl.
+            FieldValueTypeIDn = IDNum, represent smallint, the value of the FieldValue is numeric. Link with the SysBaseElementa_Tbl.
+            FieldValue = 20, is the max length of the column. This value are not linked with anythings.
+*/
+
+/*
+-- Fields that the user cant't modify
+	-- System fields, this fields are defined by the Database or Java system, the user can't modify them.
+		260	ID
+		261	IDNum
+		364	CreatedByIDn
+		365	LastModifiedByIDn
+		366	OwnerIDn
+		367	DateCreated
+		368	DateTimeStamp
+		371	TableHistory
+
+	-- System fields, the user can modify them, but should avoid it.
+		363	StateIDn
+
+-- FieldPropertyIDn
+^^^^^^^^^^^^^^^^^^^
+	The field property define the types of properties that have the field/column.
+		37	FieldPropertyType	-- Scope = 3
+				DataType
+		400		DataTypeMySql
+		401		DataTypeJava
+		402		DataTypeCustom
+		2148	IsPrimaryKey		-- is a boolean type, 1 = true / 0 = false
+		2149	IsNotNull			-- is a boolean type, 1 = true / 0 = false
+		2150	IsIndex				-- is a boolean type, 1 = true / 0 = false
+		2151	IsBinary			-- is a boolean type, 1 = true / 0 = false
+		2152	IsAutoIncremental	-- is a boolean type, 1 = true / 0 = false
+		2153	IsGeneratedField	-- is a boolean type, 1 = true / 0 = false
+		2154	IsSystemGenerated	-- is a boolean type, 1 = true / 0 = false
+				IsOptionalField		-- is a boolean type, 1 = true / 0 = false
+		etc.
+
+-- If you want to set a field list, you must to combine some propertytypes
+	Ejemplo:	Field		PropertyType		PropertyValue
+				ID			DataType			text
+    			ID			ListBox				IDNum of the list (Red/Blue/etc)
+	The list can be exclusive, or the user can enter his own values
+*/
+
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First Delete the table SysEntityStructureFieldProperties_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced baseelement_tbl Tables:
+-- ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the SysEntityStructureFieldProperties_Tbl table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysEntityStructureFieldProperties_Tbl
+DROP TABLE IF EXISTS `systemsdb`.`SysEntityStructureFieldProperties_Tbl`;
+
+CREATE TABLE `SysEntityStructureFieldProperties_Tbl` (
+	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
+	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
+      `FieldPropertyIDn` int NOT NULL COMMENT 'The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.',
+	  `EntityStructureIDn` integer NOT NULL COMMENT 'The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.',
+      `FieldValueTypeIDn` integer NOT NULL COMMENT 'The FieldValueTypeIDn is the IDNum of the value type (IDNum, Numeric, Text, etc). Its come from the SysBaseElements_Tbl). When the FieldValueType is IDNum, the number of the FieldValue is a references of the SysBaseElements_Tbl.',
+      `FieldValue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The FieldValue is a numeric/text/etc value of the property, this value is not standar and can´t be multilanguage. If the value is an IDNumType, the meaning is in the SysEntityStructure_Tbl.',
+      `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
+	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
+	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
+	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner.',
+	  `DateCreated` datetime NOT NULL COMMENT 'The DateCreated is the record creation date with UTC.',
+	  `DateTimeStamp` timestamp NOT NULL COMMENT 'The DateTimeStamp is the date of the last modification of the record with UTC.',
+ 	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
+	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
+	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
+	  PRIMARY KEY `IDNum_SptPrikey` (`IDNum`) COMMENT 'The sequence SysEntityStructureFieldProperties_Tbl generate the nextval',
+	  UNIQUE KEY `ID_SptUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
+	  UNIQUE KEY `IDNum_SptUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
+	  UNIQUE KEY `IDnFieldPropEntStruct_SptUnique` (`FieldPropertyIDn`,`EntityStructureIDn`) COMMENT 'The FieldProperty must be unique for one EntityStructure.',
+	  KEY `ID_SptIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
+      KEY `IDNum_SptIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
+      KEY `FieldPropEntStruct_SptIdx` (`FieldPropertyIDn` ASC, `EntityStructureIDn` ASC) VISIBLE COMMENT 'To optimize the search of one fields properties for an Entity structure.',
+	  CONSTRAINT `FieldPropertyIDn_Rel` FOREIGN KEY (`FieldPropertyIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `EntityStructureIDn_Rel` FOREIGN KEY (`EntityStructureIDn`) REFERENCES `systemsdb`.`SysEntityStructures_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB 
+	AUTO_INCREMENT=0 
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+    COMMENT='Contains the properties of each column/table or field/entity.
+Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
+The key for each record:
+    ID		--> is the uniqueidentifier auto generated.
+    IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+    FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.
+    EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+                            The EntityStructureIDn has a FieldIDn + EntityIDn + MicroserviceIDn unique key.
+Common Field/Columns for all tables
+    The objective of these are to store critical information for the system and the record history.
+        StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+        CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+        LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+        OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+        DateCreated			--> The DateCreated is the record creation datetime UTC.
+        DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+        TableHistory		-->	The TableHistory contain then change history of each column.
+The table operation:
+    To enter the data, you need the combination of two field, they are:
+        EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure (Microservice + Entity + Field). Link with the SysEntityStructurea_Tbl.
+        FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property (DataType, Length, IsNotNull, etc). Link with the SysBaseElementa_Tbl.
+        FieldValueTypeIDn	--> The FieldValueTypeIDn is the IDNum of the type property. ILink with the SysBaseElementa_Tbl.
+        FieldValue			--> The FieldValue is a numeric/text/etc value of the property, this value is not standard and can not be multilanguage.
+                                If the value is an IDNumType, the meaning of it, is in the SysBaseElments_Tbl.
+    Example: You have a Name column. You can set the datatype as string, and the length of the string in 20.
+        First you add one record to define the datatype.
+            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
+            FieldPropertyIDn = IDNum, represent DataType, the property of the field. Link with the SysBaseElementa_Tbl.
+            FieldValueTypeIDn = IDNum, represent table state data type. Link with the SysBaseElementa_Tbl.
+            FieldValue = 372, IDNum, represent enable value. Link with the SysBaseElementa_Tbl.
+        Second you add another record to define the lenght.
+            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
+            FieldPropertyIDn = IDNum, represent Length, the property of the field. Link with the SysBaseElementa_Tbl.
+            FieldValueTypeIDn = IDNum, represent smallint, the value of the FieldValue is numeric. Link with the SysBaseElementa_Tbl.
+            FieldValue = 20, is the max length of the column. This value are not linked with anythings.';
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Insert - SysEntityStructureFieldProperties_Tbl
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysEntityStructureFieldPropertiesBeforeInsert_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysEntityStructureFieldPropertiesBeforeInsert_Trg` BEFORE INSERT ON `SysEntityStructureFieldProperties_Tbl` FOR EACH ROW BEGIN
+	-- In the case, which the request do not give this value, MySql created it.
+	-- Set the ID uniqueidentifier, DateCreated and DateTimeStamp
+	IF new.ID IS NULL OR new.ID = '' THEN
+		SET new.ID = uuid();				-- Define the UniqueIdentifier Value
+	END IF;
+	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+END$$
+DELIMITER ;
+
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Update - SysEntityStructureFieldProperties_Tbl
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysEntityStructureFieldPropertiesBeforeUpdate_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysEntityStructureFieldPropertiesBeforeUpdate_Trg` BEFORE UPDATE ON `SysEntityStructureFieldProperties_Tbl` FOR EACH ROW BEGIN
+	-- Create the function to set the new datetimestamp and the history of the record.
+	-- This funtion is used by the SysEntityStructureFieldProperties_Tbl table before update trigger.
+	DECLARE v_TableHistory text;
+	DECLARE v_TableHistoryOld text;
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+    IF new.TableHistory = 'SetNull' THEN
+		SET new.TableHistory = null;
+    ELSEIF new.TableHistory = 'SetOff' THEN
+		SET new.TableHistory = old.TableHistory;
+    ELSE
+		-- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
+		-- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
+		SET v_TableHistoryOld := old.TableHistory;
+		SET v_TableHistory = '';
+		-- IDNum, this value never changes.
+		-- ID, this value never changes.
+        IF NEW.FieldPropertyIDn <> OLD.FieldPropertyIDn THEN SET v_TableHistory := OLD.FieldPropertyIDn; ELSE SET v_TableHistory := '†'; END IF;
+        IF NEW.EntityStructureIDn <> OLD.EntityStructureIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.EntityStructureIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.FieldValueTypeIDn <> OLD.FieldValueTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldValueTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.FieldValue <> OLD.FieldValue THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldValue); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+        IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',NEW.DateCreated); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.DateTimeStamp <> OLD.DateTimeStamp THEN SET v_TableHistory := concat(v_TableHistory,'†',OLD.DateTimeStamp); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzNameIDn <> OLD.TzNameIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzNameIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzOffset <> OLD.TzOffset THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzOffset); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			SET NEW.TableHistory := v_TableHistory;
+		ELSE
+			SET NEW.TableHistory := concat(v_TableHistory,'‡',v_TableHistory);
+		END IF;
+	END IF;
+END$$
+DELIMITER ;
+
+-- Lista los datos de la tabla
+SELECT * FROM `systemsdb`.`SysEntityStructureFieldProperties_Tbl`;
