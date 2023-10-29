@@ -9,7 +9,6 @@ The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElements_Tbl.
 	EntityIDn 		--> The EntityIDn is the IDNum of the entity. Link with the SysBaseElements_Tbl.
 	MicroserviceIDn --> the IdNum of the Microservice that the Field and Entity belong. When is equal System, all microservices hava access to them.
-	BusinessUnitID	--> the IdNum of the BusinessUnit that the Field and Entity and Microservice belong.		 
 	When an entity is selected from the Entity_Tbl, the Microservice is set, this parameter define the possible fields to be selected.
 Common Field/Columns for all tables
 	The objective of these are to store critical information for the system and the record history.
@@ -78,7 +77,6 @@ The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElements_Tbl.
 	EntityIDn 		--> The EntityIDn is the IDNum of the entity. Link with the SysBaseElements_Tbl.
 	MicroserviceIDn --> the IdNum of the Microservice that the Field and Entity belong. When is equal System, all microservices hava access to them.
-	BusinessUnitID	--> the IdNum of the BusinessUnit that the Field and Entity and Microservice belong.		 
 	When an entity is selected from the Entity_Tbl, the Microservice is set, this parameter define the possible fields to be selected.
 Common Field/Columns for all tables
 	The objective of these are to store critical information for the system and the record history.
