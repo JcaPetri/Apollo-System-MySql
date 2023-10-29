@@ -1,15 +1,14 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysRootElements_Tbl table
-/* This Is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice and BusinessUnit.
+-- Create the SysRootElements_Tli table
+/* This Is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+	The system don't use this key because, here we only enable the element to a Microservice.
 The unique Key is the union of:
 	RootElementIDn 		--> the IdNum of the entity
 	MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
-	BusinessUnitIDn		--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
 Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
 		 To make real and enable these values, we must to create a specific table for its. 
 		 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
@@ -23,31 +22,30 @@ Common Field/Columns for all tables
 		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 		TableHistory		-->	The TableHistory contain then change history of each column.
 Tips:
-	The RootElementIDn + MicroserviceIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.	
+	The RootElementIDn + MicroserviceIDn combination can be the Kafka/rabbitMq topic.
 */
 
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- First Delete the table SysRootElements_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+-- First Delete the table SysRootElements_Tli if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced baseelement_tbl Tables:
--- ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+-- The referenced SysBaseElements_Tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysBaseElements_Tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Second create the SysRootElements_Tbl table
+-- Second create the SysRootElements_Tli table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysRootElements_Tbl
-DROP TABLE IF EXISTS `systemsdb`.`SysRootElements_Tbl`;
+-- Table: public.SysRootElements_Tli
+DROP TABLE IF EXISTS `systemsdb`.`SysRootElements_Tli`;
 
-CREATE TABLE `SysRootElements_Tbl` (
+CREATE TABLE `SysRootElements_Tli` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
 	  `RootElementIDn` int NOT NULL COMMENT 'RootElementIDn is the IDNum of the element, which is enabled for this microservice and business unit.',
 	  `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
-	  `BusinessUnitIDn` int NOT NULL COMMENT 'The BusinessUnitIDn is the IdNum of the BusinessUnit to which the IDName is assigned',
 	  `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
 	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
 	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
@@ -57,27 +55,27 @@ CREATE TABLE `SysRootElements_Tbl` (
  	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
 	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
 	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY `IDNum_SrePrikey` (`IDNum`) COMMENT 'The sequence SysRootElements_Tbl generate the nextval',
+	  PRIMARY KEY `IDNum_SrePrikey` (`IDNum`) COMMENT 'The sequence SysRootElements_Tli generate the nextval',
 	  UNIQUE KEY `ID_SreUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
 	  UNIQUE KEY `IDNum_SreUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
 	  UNIQUE KEY `IDnRootEleMicroServBusinessUnit_SreUnique` (`RootElementIDn`,`MicroserviceIDn`, `BusinessUnitIDn`) COMMENT 'The IDNum must be unique for the Microservice and BusinessUnit.',
 	  KEY `ID_SreIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SreIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `RootEleMicroBusUnit_SreIdx` (`RootElementIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
-	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`BaseElement_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-    COMMENT='This Is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice and BusinessUnit.
+    COMMENT='This Is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+	The system don't use this key because, here we only enable the element to a Microservice.
 The unique Key is the union of:
 	RootElementIDn 		--> the IdNum of the entity
 	MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
-	BusinessUnitIDn		--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
 Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
 		 To make real and enable these values, we must to create a specific table for its. 
 		 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
@@ -91,17 +89,17 @@ Common Field/Columns for all tables
 		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 		TableHistory		-->	The TableHistory contain then change history of each column.
 Tips:
-	The RootElementIDn + MicroserviceIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.';
+	The RootElementIDn + MicroserviceIDn combination can be the Kafka/rabbitMq topic.';
 
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - SysRootElements_Tbl
+-- Create the Trigger Before Insert - SysRootElements_Tli
 USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysRootElementsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysRootElementsBeforeInsert_Trg` BEFORE INSERT ON `SysRootElements_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysRootElementsBeforeInsert_Trg` BEFORE INSERT ON `SysRootElements_Tli` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
@@ -114,15 +112,15 @@ DELIMITER ;
 
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - SysRootElements_Tbl
+-- Create the Trigger Before Update - SysRootElements_Tli
 USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysRootElementsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysRootElementsBeforeUpdate_Trg` BEFORE UPDATE ON `SysRootElements_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysRootElementsBeforeUpdate_Trg` BEFORE UPDATE ON `SysRootElements_Tli` FOR EACH ROW BEGIN
 	-- Create the function to set the new datetimestamp and the history of the record.
-	-- This funtion is used by the SysRootElements_Tbl table before update trigger.
+	-- This funtion is used by the SysRootElements_Tli table before update trigger.
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
@@ -139,7 +137,6 @@ CREATE TRIGGER `SysRootElementsBeforeUpdate_Trg` BEFORE UPDATE ON `SysRootElemen
 		-- ID, this value never changes.
 		IF NEW.RootElementIDn <> OLD.RootElementIDn THEN SET v_TableHistory := OLD.RootElementIDn; ELSE SET v_TableHistory := '†'; END IF;
 		IF NEW.MicroserviceIDn <> OLD.MicroserviceIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.MicroserviceIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.BusinessUnitIDn <> OLD.BusinessUnitIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.BusinessUnitIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
@@ -158,6 +155,6 @@ END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`SysRootElements_Tbl`;
+SELECT * FROM `systemsdb`.`SysRootElements_Tli`;
 
 
