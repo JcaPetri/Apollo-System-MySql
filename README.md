@@ -134,19 +134,31 @@ Detailed explanation of each table.
 					DateCreated			--> The DateCreated is the record creation datetime UTC.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.			
+
 	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 	Used to create the Microservices
+		SysMicroservices_Tbl
+			Contains the microservices that use the software. 
+			The Microservices exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+			The key for each record:
+				This table hasn't its own key, because in this table you only enable the microservice to all the system.
+			The unique Key is the union of:
+				MicroserviceIDn		--> The Microservice can not be duplicated. Link with the SysCompanies_Tbl.
+			Common Field/Columns for all tables
+				This table do not have another field, because the store critical information for the system and the record history are set in SysBaseElements_Tbl.
+
+ 	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	Used to create multiples tables
 		SysRootElements_Tli
-   			This Is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice and BusinessUnit.
+   			This Is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice.
 			The key for each record:
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 				This table has its own key only for update it.
-				The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+				The system don't use this key because, here we only enable the element to a Microservice.
 			The unique Key is the union of:
 				RootElementIDn 		--> the IdNum of the entity
 				MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
-				BusinessUnitIDn		--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
 			Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
 					 To make real and enable these values, we must to create a specific table for its. 
 					 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
@@ -160,22 +172,21 @@ Detailed explanation of each table.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.
    			Tips:
-				The RootElementIDn + MicroserviceIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.		 
+				The RootElementIDn + MicroserviceIDn combination can be the Kafka/rabbitMq topic.		 
 					 
 	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	Used to create the software structure
 		SysEntities_Tli	
 			This is a List Table that contains the entities of the system, they can be database tables or java classes. 
-			Enable the IDNum element to a Microservice and BusinessUnit.
+			Enable the IDNum element to a Microservice.
 			The key for each record:
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 				This table has its own key only for update it.
-				The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+				The system don't use this key because, here we only enable the element to a Microservice.
 			The unique Key is the union of:
 				EntityIDn 		--> the IdNum of the entity
 				MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
-				BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
 			Common Field/Columns for all tables
 				The objective of these are to store critical information for the system and the record history.
 					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -186,25 +197,23 @@ Detailed explanation of each table.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.
 	 		Important:
-				The Entity is enable in the SysEntities_Tli for a BusinessUnit and Microservice.
+				The Entity is enable in the SysEntities_Tli for a Microservice.
 				The data is created in the SysBaseElement_Tbl and is the same to all the BusinessUnit.
 				When I assign the entity, I define the business unit owner and the microservice it belongs to.
 			Kafka/rabbitMq Topic:
-				The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.	 
+				The combination of EntityIDn + MicroserviceIDn combination can be used.	 
 	
 		SysEntityFields_Tli	
-			This is a List Table that contains the fields or the columns of the entities. 
-   			Enable the IDNum element to a Microservice and BusinessUnit.
-			The fields exits to the entity, since you create it in this table. The information, of what are they, are in the SysBaseElement_Tbl table.
+			This is a List Table that contains the fields or the columns of the system. Enable the IDNum element to a Microservice.
+			The fields exits to the Microservice, since you create it in this table. The information, of what are they, are in the SysBaseElement_Tbl table.
 			The key for each record:
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 				This table has its own key only for update it.
-				The system don't use this key because, here we only enable one field/column to a Microservice and BusinessUnit.
+				The system don't use this key because, here we only enable one field/column to a Microservice.
 			The unique Key is the union of:
 				FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 				MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
-				BusinessUnitIDn	--> The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.
 			Common Field/Columns for all tables
 				The objective of these are to store critical information for the system and the record history.
 					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -225,8 +234,7 @@ Detailed explanation of each table.
 				FieldIDn 		--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElements_Tbl.
 				EntityIDn 		--> The EntityIDn is the IDNum of the entity. Link with the SysBaseElements_Tbl.
 				MicroserviceIDn --> the IdNum of the Microservice that the Field and Entity belong. When is equal System, all microservices hava access to them.
-				BusinessUnitID	--> the IdNum of the BusinessUnit that the Field and Entity and Microservice belong.		 
-				When an entity is selected from the Entity_Tbl, the Microservice and BusinessUnit are set, these parameters define the possible fields to be selected.
+				When an entity is selected from the Entity_Tbl, the Microservice is set, this parameter define the possible fields to be selected.
 			Common Field/Columns for all tables
 				The objective of these are to store critical information for the system and the record history.
 					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -238,45 +246,52 @@ Detailed explanation of each table.
 					TableHistory		-->	The TableHistory contain then change history of each column.
 	 
 		SysEntityStructureFieldProperties_Tbl
-			Contains the properties of each column/field of an table/Entity.
+			Contains the properties of each column/table or field/entity.
 			Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
 			The key for each record:
-				ID		--> is the uniqueidentifier auto generated.
-				IDNum	--> is the autoincrement number auto generated.
+			    ID		--> is the uniqueidentifier auto generated.
+			    IDNum	--> is the autoincrement number auto generated.
 			The unique Key is the union of:
-				FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.
-				EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
-										The EntityStructureIDn has a FieldIDn + EntityIDn primary key.
+			    FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.
+			    EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+			                            The EntityStructureIDn has a FieldIDn + EntityIDn + MicroserviceIDn unique key.
 			Common Field/Columns for all tables
-				The objective of these are to store critical information for the system and the record history.
-					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
-					CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
-					LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
-					OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
-					DateCreated			--> The DateCreated is the record creation datetime UTC.
-					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
-					TableHistory		-->	The TableHistory contain then change history of each column.
-	 		The table operation:
-				To enter the data you need the combination of two field, they are:
-					FieldValueTypeIDn	--> The FieldValueTypeIDn is the IDNum of the type property. Its come from the SysBaseElement.
-					FieldValue			--> The FieldValue is a numeric/text/etc value of the property, this value is not standar and can´t be multilanguage.
-											If the value is an IDNumType, the meaning is in the ArticleOptionalFields_Tbl.
-				Example: You have a Name column. You can set the datatype as string, and the length of the string in 20.
-						 First you add two record, one for datatype and one for length.
-						 DataType is a String type and is defined in the BaseElement_Tbl, so you only set the IDNum to the FieldValue. 
-								Because the IDNum is a numeric value, you set the FieldValueTypeIDn with SysElementType.
-						 Length is a numeric, so you enter the value in the FieldValue. You set the FieldValueTypeIDn wiht integer java type.
-
+			    The objective of these are to store critical information for the system and the record history.
+			        StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+			        CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+			        LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+			        OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+			        DateCreated			--> The DateCreated is the record creation datetime UTC.
+			        DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+			        TableHistory		-->	The TableHistory contain then change history of each column.
+			The table operation:
+			    To enter the data, you need the combination of two field, they are:
+			        EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure (Microservice + Entity + Field). Link with the SysEntityStructurea_Tbl.
+			        FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property (DataType, Length, IsNotNull, etc). Link with the SysBaseElementa_Tbl.
+			        FieldValueTypeIDn	--> The FieldValueTypeIDn is the IDNum of the type property. ILink with the SysBaseElementa_Tbl.
+			        FieldValue			--> The FieldValue is a numeric/text/etc value of the property, this value is not standard and can not be multilanguage.
+			                                If the value is an IDNumType, the meaning of it, is in the SysBaseElments_Tbl.
+			    Example: You have a Name column. You can set the datatype as string, and the length of the string in 20.
+			        First you add one record to define the datatype.
+			            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
+			            FieldPropertyIDn = IDNum, represent DataType, the property of the field. Link with the SysBaseElementa_Tbl.
+			            FieldValueTypeIDn = IDNum, represent table state data type. Link with the SysBaseElementa_Tbl.
+			            FieldValue = 372, IDNum, represent enable value. Link with the SysBaseElementa_Tbl.
+			        Second you add another record to define the lenght.
+			            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
+			            FieldPropertyIDn = IDNum, represent Length, the property of the field. Link with the SysBaseElementa_Tbl.
+			            FieldValueTypeIDn = IDNum, represent smallint, the value of the FieldValue is numeric. Link with the SysBaseElementa_Tbl.
+			            FieldValue = 20, is the max length of the column. This value are not linked with anythings.
+			
 		SysEntityStructureFieldDefaultValues_Tbl
-			Contains the default value of each field or column. When you set a value for a column, if the user don't enter, the system get from this table the value to enter.
+			Contains the default value of each field or column. When you set a value for a column, if the user do not enter, the system get the value from this table.
 			The key for each record:
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 			The unique Key is the union of:
-				FieldIDn			--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElement_Tbl.
 				DefaultVersionIDn	--> The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.
-				EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
-										The EntityStructureIDn has a FieldIDn + EntityIDn primary key.
+		  		EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+			                            The EntityStructureIDn has a FieldIDn + EntityIDn + MicroserviceIDn unique key.
 			Common Field/Columns for all tables
 				The objective of these are to store critical information for the system and the record history.
 					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -287,9 +302,9 @@ Detailed explanation of each table.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.
 	 		The table operation:
-				After you select the table and the field you need to define this two fields:
+				After you select the EntityStructure (FieldIDn + EntityIDn + MicroserviceIDn) you need to define this two fields:
 					DefaultVersionIDn	--> The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.
-					FieldDefaultValue	--> The FieldDefaultValue is a value that must be the same type of the field defined in the SysEntityStructure_Tbl.
+					FieldDefaultValue	--> The FieldDefaultValue is a value that must be the same DataType of the field defined in the SysEntityStructures_Tbl.
 				You can define more than one version. 
 				Example: If you have to import some data from two diferent suppliers, you can define two diferent version. 
 						 In the field supplierIDn, you set the specific number of the supplier.
