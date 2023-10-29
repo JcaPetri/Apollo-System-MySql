@@ -117,8 +117,8 @@ CREATE TABLE `SysEntityStructureFieldProperties_Tbl` (
 	  KEY `ID_SptIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SptIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `FieldPropEntStruct_SptIdx` (`FieldPropertyIDn` ASC, `EntityStructureIDn` ASC) VISIBLE COMMENT 'To optimize the search of one fields properties for an Entity structure.',
-	  CONSTRAINT `FieldPropertyIDn_Rel` FOREIGN KEY (`FieldPropertyIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `EntityStructureIDn_Rel` FOREIGN KEY (`EntityStructureIDn`) REFERENCES `systemsdb`.`SysEntityStructures_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `FieldPropertyIDn_SptRel` FOREIGN KEY (`FieldPropertyIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `EntityStructureIDn_SptRel` FOREIGN KEY (`EntityStructureIDn`) REFERENCES `systemsdb`.`SysEntityStructures_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -146,18 +146,7 @@ The table operation:
         FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property (DataType, Length, IsNotNull, etc). Link with the SysBaseElementa_Tbl.
         FieldValueTypeIDn	--> The FieldValueTypeIDn is the IDNum of the type property. ILink with the SysBaseElementa_Tbl.
         FieldValue			--> The FieldValue is a numeric/text/etc value of the property, this value is not standard and can not be multilanguage.
-                                If the value is an IDNumType, the meaning of it, is in the SysBaseElments_Tbl.
-    Example: You have a Name column. You can set the datatype as string, and the length of the string in 20.
-        First you add one record to define the datatype.
-            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
-            FieldPropertyIDn = IDNum, represent DataType, the property of the field. Link with the SysBaseElementa_Tbl.
-            FieldValueTypeIDn = IDNum, represent table state data type. Link with the SysBaseElementa_Tbl.
-            FieldValue = 372, IDNum, represent enable value. Link with the SysBaseElementa_Tbl.
-        Second you add another record to define the lenght.
-            EntityStructureIDn = IDNum, represent Entity Person, Column = StateIDn. Link with the SysEntityStructurea_Tbl.
-            FieldPropertyIDn = IDNum, represent Length, the property of the field. Link with the SysBaseElementa_Tbl.
-            FieldValueTypeIDn = IDNum, represent smallint, the value of the FieldValue is numeric. Link with the SysBaseElementa_Tbl.
-            FieldValue = 20, is the max length of the column. This value are not linked with anythings.';
+                                If the value is an IDNumType, the meaning of it, is in the SysBaseElments_Tbl.';
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the Trigger Before Insert - SysEntityStructureFieldProperties_Tbl
