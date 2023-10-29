@@ -1,0 +1,50 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysMicroservices_Tbl table
+/* Contains the microservices that use the software. 
+The Microservices exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+The key for each record:
+    This table hasn't its own key, because in this table you only enable the microservice to all the system.
+The unique Key is the union of:
+    MicroserviceIDn		--> The Microservice can not be duplicated. Link with the SysCompanies_Tbl.
+Common Field/Columns for all tables
+    This table do not have another field, because the store critical information for the system and the record history are set in SysBaseElements_Tbl.
+*/
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First Delete the table SysMicroservices_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced SysBaseElements_Tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysBaseElements_Tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the SysMicroservices_Tbl table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysMicroservices_Tbl
+DROP TABLE IF EXISTS `systemsdb`.`SysMicroservices_Tbl`;
+
+CREATE TABLE `SysMicroservices_Tbl` (
+	  `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
+	  PRIMARY KEY `MicroserviceIDn_SmsPrikey` (`MicroserviceIDn`) COMMENT 'The IDNum is generated in the SysBaseElement_Tbl.',
+	  UNIQUE KEY `MicroserviceIDn_SreUnique` (`MicroserviceIDn`) COMMENT 'The IDNum must be unique.',
+	  KEY `Microservice_SmsIdx` (`MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of.',
+	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB 
+	AUTO_INCREMENT=0 
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+    COMMENT='Contains the microservices that use the software. 
+The Microservices exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+The key for each record:
+    This table hasn't its own key, because in this table you only enable the microservice to all the system.
+The unique Key is the union of:
+    MicroserviceIDn		--> The Microservice can not be duplicated. Link with the SysCompanies_Tbl.
+Common Field/Columns for all tables
+    This table do not have another field, because the store critical information for the system and the record history are set in SysBaseElements_Tbl.';
+
+-- Lista los datos de la tabla
+SELECT * FROM `systemsdb`.`SysMicroservices_Tbl`;
+
+
+
