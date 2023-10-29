@@ -1,16 +1,16 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntityStructures_Tbl table
-/* 
-Contains the system structure. 
-In this table you build the tables and java entities structures, with thiers column and fields.
-	You must define all the properties of the entities.
-	The key for each record:
-		ID		--> is the uniqueidentifier auto generated.
-		IDNum	--> is the autoincrement number auto generated.
-	The unique Key is the union of:
-		FieldIDn 		--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysEntityFields_Tbl.
-		EntityIDn 		--> The EntityIDn is the IDNum of the entity. Link with the SysEntities_Tbl.
-			After select a BusinessUnit and Microservice are selected, you can select only the Entities and Fields that are enable to them. 
+/*Contains the system structure. In this table you build the tables and java entities structures, with thiers column and fields.
+You must define all the properties of the entities.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	FieldIDn 		--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElements_Tbl.
+	EntityIDn 		--> The EntityIDn is the IDNum of the entity. Link with the SysBaseElements_Tbl.
+	MicroserviceIDn --> the IdNum of the Microservice that the Field and Entity belong. When is equal System, all microservices hava access to them.
+	BusinessUnitID	--> the IdNum of the BusinessUnit that the Field and Entity and Microservice belong.		 
+	When an entity is selected from the Entity_Tbl, the Microservice is set, this parameter define the possible fields to be selected.
 Common Field/Columns for all tables
 	The objective of these are to store critical information for the system and the record history.
 		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -42,6 +42,7 @@ CREATE TABLE `SysEntityStructures_Tbl` (
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
       `FieldIDn` int NOT NULL COMMENT 'The FieldIDn is the IDNum of the field/column of the entity. Link with the SysEntityFields_Tbl.',
 	  `EntityIDn` integer NOT NULL COMMENT 'The EntityIDn is the IDNum of the entity. Link with the SysEntities_Tbl. The entity is set to a microservice and business unit.',
+      `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
 	  `DataTypeIDn` integer NOT NULL COMMENT 'The DataTypeIDn is the IDNum of the type of data that you can enter in the field. Link with the SysBaseElements_Tbl.',
       `FieldOrder` integer NOT NULL COMMENT 'The FieldOrder is an ascendent number to order the fields/columns. If the user don`t define, the system insert an autonumeric increment number.',
       `AdmitDefaultValue` boolean NOT NULL COMMENT 'The AdmitDefaultValue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.',
@@ -58,25 +59,27 @@ CREATE TABLE `SysEntityStructures_Tbl` (
 	  PRIMARY KEY `IDNum_SesPrikey` (`IDNum`) COMMENT 'The sequence SysEntityStructures_Tbl generate the nextval',
 	  UNIQUE KEY `ID_SesUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
 	  UNIQUE KEY `IDNum_SesUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
-	  UNIQUE KEY `IDnFieldEntity_SefUnique` (`SysEntityFields_Tbl`,`SysEntities_Tbl`) COMMENT 'The Field must be unique for one Entity.',
+	  UNIQUE KEY `IDnFieldEntMicro_SefUnique` (`FieldIDn`,`EntityIDn`,`MicroserviceIDn`) COMMENT 'The Field must be unique for one Entity, Microservice.',
 	  KEY `ID_SefIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SefIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-      KEY `FieldMicroBusUnit_SefIdx` (`SysEntityFields_Tbl` ASC, `SysEntities_Tbl` ASC) VISIBLE COMMENT 'To optimize the search of one fields for an Entity.',
-	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysEntityFields_Tbl` (`FieldIDn`) ON DELETE CASCADE ON UPDATE CASCADE
-	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysEntities_Tbl` (`EntityIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+      KEY `FieldEntMicrBusUnit_SefIdx` (`FieldIDn` ASC, `EntityIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one fields for an Entity.',
+	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-    COMMENT='Contains the system structure. 
-In this table you build the tables and java entities structures, with thiers column and fields.
-	You must define all the properties of the entities.
-	The key for each record:
-		ID		--> is the uniqueidentifier auto generated.
-		IDNum	--> is the autoincrement number auto generated.
-	The unique Key is the union of:
-		FieldIDn 		--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysEntityFields_Tbl.
-		EntityIDn 		--> The EntityIDn is the IDNum of the entity. Link with the SysEntities_Tbl.
-			After select a BusinessUnit and Microservice are selected, you can select only the Entities and Fields that are enable to them. 
+    COMMENT='Contains the system structure. In this table you build the tables and java entities structures, with thiers column and fields.
+You must define all the properties of the entities.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	FieldIDn 		--> The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElements_Tbl.
+	EntityIDn 		--> The EntityIDn is the IDNum of the entity. Link with the SysBaseElements_Tbl.
+	MicroserviceIDn --> the IdNum of the Microservice that the Field and Entity belong. When is equal System, all microservices hava access to them.
+	BusinessUnitID	--> the IdNum of the BusinessUnit that the Field and Entity and Microservice belong.		 
+	When an entity is selected from the Entity_Tbl, the Microservice is set, this parameter define the possible fields to be selected.
 Common Field/Columns for all tables
 	The objective of these are to store critical information for the system and the record history.
 		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -136,6 +139,7 @@ CREATE TRIGGER `SysEntityStructuresBeforeUpdate_Trg` BEFORE UPDATE ON `SysEntity
 		-- ID, this value never changes.
         IF NEW.FieldIDn <> OLD.FieldIDn THEN SET v_TableHistory := OLD.FieldIDn; ELSE SET v_TableHistory := '†'; END IF;
 		IF NEW.EntityIDn <> OLD.EntityIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.EntityIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.MicroserviceIDn <> OLD.MicroserviceIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.MicroserviceIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.DataTypeIDn <> OLD.DataTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.DataTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.FieldOrder <> OLD.FieldOrder THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldOrder); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.AdmitDefaultValue <> OLD.AdmitDefaultValue THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.AdmitDefaultValue); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
