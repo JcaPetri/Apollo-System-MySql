@@ -1,9 +1,9 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysMicroservices_Tbl table
 /* Contains the microservices that use the software. 
-The Microservices exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+The Microservices exists since you create them in this table. Its information, of what are they, are in the SysBaseElements_Tbl table.
 The key for each record:
-    This table hasn't its own key, because in this table you only enable the microservice to all the system.
+    This table has not its own key, because in this table you only enable the microservice to all the system.
 The unique Key is the union of:
     MicroserviceIDn		--> The Microservice can not be duplicated. Link with the SysCompanies_Tbl.
 Common Field/Columns for all tables
@@ -40,9 +40,9 @@ CREATE TABLE `SysMicroservices_Tbl` (
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
     COMMENT='Contains the microservices that use the software. 
-The Microservices exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+The Microservices exists since you create them in this table. Its information, of what are they, are in the SysBaseElements_Tbl table.
 The key for each record:
-    This table hasn't its own key, because in this table you only enable the microservice to all the system.
+    This table has not its own key, because in this table you only enable the microservice to all the system.
 The unique Key is the union of:
     MicroserviceIDn		--> The Microservice can not be duplicated. Link with the SysCompanies_Tbl.
 Common Field/Columns for all tables
