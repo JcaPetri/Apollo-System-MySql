@@ -1,22 +1,31 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntities_Tbl table
-/*
-Contains the entities of the system, they can be database tables or java classes.
-The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+/*This is a List Table that contains the entities of the system, they can be database tables or java classes. 
+Enable the IDNum element to a Microservice and BusinessUnit.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
+	This table has its own key only for update it.
+	The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
 The unique Key is the union of:
 	EntityIDn 		--> the IdNum of the entity
 	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
 	BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+Common Field/Columns for all tables
+	The objective of these are to store critical information for the system and the record history.
+		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+		DateCreated			--> The DateCreated is the record creation datetime UTC.
+		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+		TableHistory		-->	The TableHistory contain then change history of each column.
 Important:
-	The Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
-	The data is created in the BaseElement_Tbl and is the same to all the BusinessUnit.
-	When I create the entity, I define the business unit owner and the microservice it belongs to.
-	That is the reason why you generate a new ID and IdNum for this table. 
+	The Entity is enable in the SysEntities_Tli for a BusinessUnit and Microservice.
+	The data is created in the SysSysBaseElements_Tbl and is the same to all the BusinessUnit.
+	When I assign the entity, I define the business unit owner and the microservice it belongs to.
 Kafka/rabbitMq Topic:
-	The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.	
+	The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.
 */
 
 -- #########################################################################################################################################################################################
@@ -24,8 +33,8 @@ Kafka/rabbitMq Topic:
 -- First Delete the table SysEntities_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced baseelement_tbl Tables:
--- ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+-- The referenced SysBaseElements_Tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysBaseElements_Tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,24 +66,34 @@ CREATE TABLE `SysEntities_Tbl` (
 	  KEY `ID_SenIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SenIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `EntityMicroBusUnit_SenIdx` (`EntityIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
-	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`BaseElement_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-    COMMENT='Contains the entities of the system, they can be database tables or java classes.
-The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+    COMMENT='This is a List Table that contains the entities of the system, they can be database tables or java classes. 
+Enable the IDNum element to a Microservice and BusinessUnit.
 The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
+	This table has its own key only for update it.
+	The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
 The unique Key is the union of:
 	EntityIDn 		--> the IdNum of the entity
 	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
 	BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+Common Field/Columns for all tables
+	The objective of these are to store critical information for the system and the record history.
+		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+		DateCreated			--> The DateCreated is the record creation datetime UTC.
+		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+		TableHistory		-->	The TableHistory contain then change history of each column.
 Important:
-	The Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
-	The data is created in the BaseElement_Tbl and is the same to all the BusinessUnit.
-	When I create the entity, I define the business unit owner and the microservice it belongs to.
-	That is the reason why you generate a new ID and IdNum for this table. 
+	The Entity is enable in the SysEntities_Tli for a BusinessUnit and Microservice.
+	The data is created in the SysSysBaseElements_Tbl and is the same to all the BusinessUnit.
+	When I assign the entity, I define the business unit owner and the microservice it belongs to.
 Kafka/rabbitMq Topic:
 	The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.';
 
