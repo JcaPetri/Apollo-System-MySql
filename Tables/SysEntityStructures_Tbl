@@ -103,7 +103,7 @@ CREATE TRIGGER `SysEntityStructuresBeforeInsert_Trg` BEFORE INSERT ON `SysEntity
 	END IF;
 	-- Set the FieldOrder
 	IF NEW.FieldOrder IS NULL THEN 
-		NEW.FieldOrder := (SELECT COALESCE(MAX(FieldOrder),0) + 1 FROM `systemsdb`.`SysEntityStructures_Tbl` WHERE EntityIDn = NEW.EntityIDn);
+		NEW.FieldOrder := (SELECT COALESCE(MAX(FieldOrder),0) + 1 FROM `systemsdb`.`SysEntityStructures_Tbl` WHERE EntityIDn = NEW.EntityIDn AND MicroserviceIDn = NEW.MicroserviceIDn);
 	END IF;
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
