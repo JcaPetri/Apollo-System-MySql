@@ -51,13 +51,12 @@ CREATE TABLE `SysBaseElementComments_Tbl` (
  	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
 	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
 	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY `ID_SblPriKey` (`IDNum`) COMMENT 'The sequence SysBaseElementComments_Tbl_seq generate the nextval',
-	  UNIQUE KEY `ID_SblUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
-	  UNIQUE KEY `IDNum_SblUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
-	  UNIQUE KEY `IDNameScopeBusUnitLang_SblUnique` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`) COMMENT 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.',
-	  KEY `ID_SblIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
-	  KEY `IDNum_SblIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-	  CONSTRAINT `DataElementLanguageIDn_Rel` FOREIGN KEY (`DataElementLanguageIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  PRIMARY KEY `ID_SbcPriKey` (`IDNum`) COMMENT 'The sequence SysBaseElementComments_Tbl_seq generate the nextval',
+	  UNIQUE KEY `ID_SbcUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
+	  UNIQUE KEY `IDNum_SbcUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
+	  KEY `ID_SbcIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
+	  KEY `IDNum_SbcIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
+	  CONSTRAINT `CommentIDn_Rel` FOREIGN KEY (`CommentIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
