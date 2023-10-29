@@ -16,7 +16,12 @@ Common Field/Columns for all tables
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced SysBaseElements_Tbl Tables:
--- ALTER TABLE `systemsdb`.`SysBaseElements_Tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+ALTER TABLE `systemsdb`.`SysCompanyMicroservice_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysRootElements_Tli`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysEntities_Tli`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysFields_Tli`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysEntityStructures_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -26,7 +31,7 @@ USE systemsdb;
 DROP TABLE IF EXISTS `systemsdb`.`SysMicroservices_Tbl`;
 
 CREATE TABLE `SysMicroservices_Tbl` (
-	  `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
+	  `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which is anable.',
 	  PRIMARY KEY `MicroserviceIDn_SmsPrikey` (`MicroserviceIDn`) COMMENT 'The IDNum is generated in the SysBaseElement_Tbl.',
 	  UNIQUE KEY `MicroserviceIDn_SreUnique` (`MicroserviceIDn`) COMMENT 'The IDNum must be unique.',
 	  KEY `Microservice_SmsIdx` (`MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of.',
