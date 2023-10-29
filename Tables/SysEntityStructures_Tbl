@@ -27,7 +27,10 @@ Common Field/Columns for all tables
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced baseelement_tbl Tables:
--- ALTER TABLE `systemsdb`.`baseelement_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+ALTER TABLE `systemsdb`.`SysEntityStructureFieldProperties_Tbl`  DROP FOREIGN KEY `EntityStructureIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysEntityStructureFieldDefaultValues_Tbl`  DROP FOREIGN KEY `EntityStructureIDn_Rel`;
+
+
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,9 +65,9 @@ CREATE TABLE `SysEntityStructures_Tbl` (
 	  KEY `ID_SefIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SefIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `FieldEntMicrBusUnit_SefIdx` (`FieldIDn` ASC, `EntityIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one fields for an Entity.',
-	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `FieldIDn_SefRel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `EntityIDn_SefRel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_SefRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -103,7 +106,7 @@ CREATE TRIGGER `SysEntityStructuresBeforeInsert_Trg` BEFORE INSERT ON `SysEntity
 	END IF;
 	-- Set the FieldOrder
 	IF NEW.FieldOrder IS NULL THEN 
-		NEW.FieldOrder := (SELECT COALESCE(MAX(FieldOrder),0) + 1 FROM `systemsdb`.`SysEntityStructures_Tbl` WHERE EntityIDn = NEW.EntityIDn AND MicroserviceIDn = NEW.MicroserviceIDn);
+		SET NEW.FieldOrder := (SELECT COALESCE(MAX(FieldOrder),0) + 1 FROM `systemsdb`.`SysEntityStructures_Tbl` WHERE EntityIDn = NEW.EntityIDn AND MicroserviceIDn = NEW.MicroserviceIDn);
 	END IF;
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
