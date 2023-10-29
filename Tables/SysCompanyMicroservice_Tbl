@@ -55,8 +55,8 @@ CREATE TABLE `SysCompanyMicroservice_Tbl` (
 	  KEY `ID_ScmIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_ScmIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `CompanyMicroServ_ScmIdx` (`CompanyIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one Company and a Microservices.',
-	  CONSTRAINT `CompanyIDn_Rel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysCompanies_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `CompanyIDn_ScmRel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysCompanies_Tbl` (`CompanyIDn`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_ScmRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
