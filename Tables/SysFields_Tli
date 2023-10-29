@@ -6,7 +6,7 @@ The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable one field/column to a Microservice.
+	The system does not use this key because, here we only enable one field/column to a Microservice.
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
@@ -58,8 +58,8 @@ CREATE TABLE `SysFields_Tli` (
 	  KEY `ID_SfiIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SfiIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `FieldMicroServ_SfiIdx` (`FieldIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Microservices Tables.',
-	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `FieldIDn_SfiRel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_SfiRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -69,7 +69,7 @@ The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable one field/column to a Microservice.
+	The system does not use this key because, here we only enable one field/column to a Microservice.
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
