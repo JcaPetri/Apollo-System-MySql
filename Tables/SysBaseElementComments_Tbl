@@ -2,12 +2,12 @@
 -- Create the SysBaseElementComments_Tbl table
 /*Contains one or more descriptions/comments/details/explains of each record of the diccionary.
 It has a defined language, an order when there is more than one description, a type of text format (mimetype), a status and the date of the last update.
-If the element has not been recorded in this table, it means the element hasn't clarifications.
+If the element has not been recorded in this table, it means the element has not clarifications.
 The key for each record:
     ID		--> is the uniqueidentifier auto generated.
     IDNum	--> is the autoincrement number auto generated.
 The unique Key is the union of:
-    This table haven't unique key because one IDNum can have none, one or more coments.
+    This table have not unique key because one IDNum can have none, one or more coments.
 Common Field/Columns for all tables
     The objective of these are to store critical information for the system and the record history.
         StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -62,12 +62,12 @@ CREATE TABLE `SysBaseElementComments_Tbl` (
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
 	COMMENT='Contains one or more descriptions/comments/details/explains of each record of the diccionary.
 It has a defined language, an order when there is more than one description, a type of text format (mimetype), a status and the date of the last update.
-If the element has not been recorded in this table, it means the element hasn't clarifications.
+If the element has not been recorded in this table, it means the element has not clarifications.
 The key for each record:
     ID		--> is the uniqueidentifier auto generated.
     IDNum	--> is the autoincrement number auto generated.
 The unique Key is the union of:
-    This table haven't unique key because one IDNum can have none, one or more coments.
+    This table have not unique key because one IDNum can have none, one or more coments.
 Common Field/Columns for all tables
     The objective of these are to store critical information for the system and the record history.
         StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -93,8 +93,8 @@ CREATE TRIGGER `SysBaseElementCommentsBeforeInsert_Trg` BEFORE INSERT ON `SysBas
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
-	SET new.ScopeIDn = (SELECT TOP  1 ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.CommentIDn);
-	SET new.BusinessUnitIDn = (SELECT TOP  1 BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BusinessUnitIDn);
+	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.CommentIDn LIMIT 1);
+	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BusinessUnitIDn LIMIT 1);
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
 END$$
