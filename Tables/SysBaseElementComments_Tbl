@@ -94,6 +94,8 @@ CREATE TRIGGER `SysBaseElementCommentsBeforeInsert_Trg` BEFORE INSERT ON `SysBas
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
+	SET new.ScopeIDn = (SELECT TOP  1 ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.CommentIDn);
+	SET new.BusinessUnitIDn = (SELECT TOP  1 BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BusinessUnitIDn);
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
 END$$
