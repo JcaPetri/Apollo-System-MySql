@@ -47,8 +47,12 @@ Tips:
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced SysBaseElements_Tbl Tables:
+ALTER TABLE `systemsdb`.`SysMicroservices_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
 ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;
-ALTER TABLE `systemsdb`.`SysEntities_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`;     
+ALTER TABLE `systemsdb`.`SysEntities_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`; 
+ALTER TABLE `systemsdb`.`SysEntityFields_Tbl`  DROP FOREIGN KEY `FieldIDn_Rel`;  
+ALTER TABLE `systemsdb`.`SysEntityStructures_Tbl`  DROP FOREIGN KEY `FieldIDn_Rel`;  
+ALTER TABLE `systemsdb`.`SysEntityStructures_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`;  
 
 -- After deleted the referenced, you can delete the table
 DROP TABLE IF EXISTS `systemsdb`.`SysBaseElements_Tbl`;
