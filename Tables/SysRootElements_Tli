@@ -58,10 +58,10 @@ CREATE TABLE `SysRootElements_Tli` (
 	  PRIMARY KEY `IDNum_SrePrikey` (`IDNum`) COMMENT 'The sequence SysRootElements_Tli generate the nextval',
 	  UNIQUE KEY `ID_SreUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
 	  UNIQUE KEY `IDNum_SreUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
-	  UNIQUE KEY `IDnRootEleMicroServBusinessUnit_SreUnique` (`RootElementIDn`,`MicroserviceIDn`, `BusinessUnitIDn`) COMMENT 'The IDNum must be unique for the Microservice and BusinessUnit.',
+	  UNIQUE KEY `IDnRootEleMicroServ_SreUnique` (`RootElementIDn`,`MicroserviceIDn`) COMMENT 'The IDNum must be unique for the Microservice.',
 	  KEY `ID_SreIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SreIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-      KEY `RootEleMicroBusUnit_SreIdx` (`RootElementIDn` ASC, `MicroserviceIDn` ASC, `BusinessUnitIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Business Tables.',
+      KEY `RootEleMicroBusUnit_SreIdx` (`RootElementIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Microservices Tables.',
 	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
 	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
