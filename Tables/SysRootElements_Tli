@@ -5,11 +5,11 @@ The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable the element to a Microservice.
+	The system does not use this key because, here we only enable the element to a Microservice.
 The unique Key is the union of:
 	RootElementIDn 		--> the IdNum of the entity
 	MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
-Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
+Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values ca not use it.
 		 To make real and enable these values, we must to create a specific table for its. 
 		 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
 Common Field/Columns for all tables
@@ -62,8 +62,8 @@ CREATE TABLE `SysRootElements_Tli` (
 	  KEY `ID_SreIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SreIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `RootEleMicroBusUnit_SreIdx` (`RootElementIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Microservices Tables.',
-	  CONSTRAINT `RootElementIDn_Rel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `RootElementIDn_SreRel` FOREIGN KEY (`RootElementIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_SreRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -72,11 +72,11 @@ The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable the element to a Microservice.
+	The system does not use this key because, here we only enable the element to a Microservice.
 The unique Key is the union of:
 	RootElementIDn 		--> the IdNum of the entity
 	MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
-Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
+Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values ca not use it.
 		 To make real and enable these values, we must to create a specific table for its. 
 		 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
 Common Field/Columns for all tables
