@@ -6,7 +6,7 @@ The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable the element to a Microservice.
+	The system does not use this key because, here we only enable the element to a Microservice.
 The unique Key is the union of:
 	EntityIDn 		--> the IdNum of the entity
 	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
@@ -64,8 +64,8 @@ CREATE TABLE `SysEntities_Tli` (
 	  KEY `ID_SenIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SenIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `EntityMicro_SenIdx` (`EntityIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Microservices Tables.',
-	  CONSTRAINT `EntityIDn_Rel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `EntityIDn_SenRel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_SenRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -75,7 +75,7 @@ The key for each record:
 	ID		--> is the uniqueidentifier auto generated.
 	IDNum	--> is the autoincrement number auto generated.
 	This table has its own key only for update it.
-	The system don't use this key because, here we only enable the element to a Microservice.
+	The system does not use this key because, here we only enable the element to a Microservice.
 The unique Key is the union of:
 	EntityIDn 		--> the IdNum of the entity
 	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
