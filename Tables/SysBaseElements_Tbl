@@ -47,12 +47,17 @@ Tips:
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced SysBaseElements_Tbl Tables:
+ALTER TABLE `systemsdb`.`SysBaseElementLanguages_Tbl`  DROP FOREIGN KEY `DataElementLanguageIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysBaseElementComments_Tbl`  DROP FOREIGN KEY `CommentIDn_Rel`;
 ALTER TABLE `systemsdb`.`SysMicroservices_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+ALTER TABLE `systemsdb`.`SysCompanies_Tbl`  DROP FOREIGN KEY `CompanyIDn_Rel`;
 ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;
 ALTER TABLE `systemsdb`.`SysEntities_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`; 
 ALTER TABLE `systemsdb`.`SysEntityFields_Tbl`  DROP FOREIGN KEY `FieldIDn_Rel`;  
 ALTER TABLE `systemsdb`.`SysEntityStructures_Tbl`  DROP FOREIGN KEY `FieldIDn_Rel`;  
 ALTER TABLE `systemsdb`.`SysEntityStructures_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`;  
+ALTER TABLE `systemsdb`.`SysEntityStructureFieldProperties_Tbl`  DROP FOREIGN KEY `FieldPropertyIDn_Rel`;  
+ALTER TABLE `systemsdb`.`SysEntityStructureFieldDefaultValues_Tbl`  DROP FOREIGN KEY `DefaultVersionIDn_Rel`;  
 
 -- After deleted the referenced, you can delete the table
 DROP TABLE IF EXISTS `systemsdb`.`SysBaseElements_Tbl`;
