@@ -11,7 +11,7 @@ The unique Key is the union of:
     RelationID	--> The ID of the relation (uniqueidentifier). Link with the SysCompanyRelations_Tbl ID Value.
     RelationLevel	--> The level of the relation, all start with the number 1. 
     RelationOrden	--> The Orden inside the level, all level start with the number 1.
-    CompanyIDn	--> The CompanyIDn is the IDNum of the Company involved in the relation. Link with the SysCompanies_Tbl.
+    CompanyRelationsIDn	--> The CompanyRelationsIDn is the IDNum of the Company involved in the relation. Link with the SysCompanies_Tbl.
 Common Field/Columns for all tables
   The objective of these are to store critical information for the system and the record history.
     StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -44,7 +44,7 @@ CREATE TABLE `SysCompanyRelations_Tbl` (
       `RelationID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID of the relation. Link with the SysCompanyRelations_Tbl ID Value.',
       `RelationLevel` smallint NOT NULL COMMENT 'The level of the relation is a number that start with 1.',
       `RelationOrden` smallint NOT NULL COMMENT 'The Orden inside the level, all level start with the number 1.',
-      `CompanyIDn` int NOT NULL COMMENT 'The CompanyIDn is the IDNum of the Company involved in the relation. Link with the SysCompanies_Tbl.',
+      `CompanyRelationsIDn` int NOT NULL COMMENT 'The CompanyIDn is the IDNum of the Company involved in the relation. Link with the SysCompanies_Tbl.',
 	  `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
 	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
 	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
@@ -60,7 +60,7 @@ CREATE TABLE `SysCompanyRelations_Tbl` (
 	  KEY `ID_ScrIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_ScrIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `IDRelation_ScrIdx` (`ID` ASC, `RelationID` ASC) VISIBLE COMMENT 'To optimize the search of one Father and Son.',
-	  CONSTRAINT `CompanyIDn_Rel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysCompanies_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `CompanyRelationsIDn_Rel` FOREIGN KEY (`CompanyRelationsIDn`) REFERENCES `systemsdb`.`SysCompanies_Tbl` (`CompanyIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -75,7 +75,7 @@ The unique Key is the union of:
     RelationID	--> The ID of the relation (uniqueidentifier). Link with the SysCompanyRelations_Tbl ID Value.
     RelationLevel	--> The level of the relation, all start with the number 1. 
     RelationOrden	--> The Orden inside the level, all level start with the number 1.
-    CompanyIDn	--> The CompanyIDn is the IDNum of the Company involved in the relation. Link with the SysCompanies_Tbl.
+    CompanyRelationsIDn	--> The CompanyIDn is the IDNum of the Company involved in the relation. Link with the SysCompanies_Tbl.
 Common Field/Columns for all tables
   The objective of these are to store critical information for the system and the record history.
     StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -133,7 +133,7 @@ CREATE TRIGGER `SysCompanyRelationsBeforeUpdate_Trg` BEFORE UPDATE ON `SysCompan
     	IF NEW.RelationID <> OLD.RelationID THEN SET v_TableHistory := OLD.RelationID; ELSE SET v_TableHistory := '†'; END IF;
         IF NEW.RelationLevel <> OLD.RelationLevel THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.RelationLevel); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.RelationOrden <> OLD.RelationOrden THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.RelationOrden); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.CompanyIDn <> OLD.CompanyIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CompanyIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+        IF NEW.CompanyRelationsIDn <> OLD.CompanyRelationsIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CompanyRelationsIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
