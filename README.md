@@ -87,23 +87,22 @@ Detailed explanation of each table.
 					In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
 					In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
 			Tips:
-				The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.
+				The ScopeIDn + BusinessUnitIDn + TableIDn combination can be the Kafka/rabbitMq topic.
 
 		SysBaseElementLanguages_Tbl	
 			Contains the meaning of the diccionary in another languages than the default.
-			In this table you have to comply with the same rules as the TBaseElement table.
+			In this table you have to comply with the same rules as the SysBaseElements_Tbl.
 			Important Clarification: the values IdNum, ScopeIDn, CompanyIDn = are always equal to the ApplTDataElement table. 
 									 These columns are put in this table only to ensure integrity and that there are no duplicates.
 		    The key for each record:
 				ID		--> is the uniqueidentifier auto generated.
 				IDNum	--> is the autoincrement number auto generated.
 			The unique Key is the union of:
-			  	IDNum			--> Is the number unique autonumerical value. It is created in the SysBaseElements_Tbl.
-				-- This two values are defined by the user.
-			  	IDName     		-> is the readable code by the user.
-			  	LanguageIDn 	-> the Name must be unique for the new Language. It must be diferent from the default language.
+			  	-- This three values are defined by the user.
+			  	BaseElementLanguageIDn	--> the IdNum of the element that has another languages meaning. It is created in the SysBaseElements_Tbl.
+			  	NameID     		-> is the readable code by the user.
+			  	LanguageIDn 	-> the LanguagesIDn must be diferent from the default language.
 			  	-- This two values are set by the system automaticaly, and are the same as the SysBaseElement_Tbl. For do that use the IdNum.
-			  	BaseElementLanguageIDn	--> the IdNum of the element that has another langueges.
 			  	ScopeIDn     	-> the Name must be unique for the application Scope, usually a Table.
 			  	BusinessUnitIDn	-> the Name must be unique for the BusinessUnit.
 			Common Field/Columns for all tables
@@ -115,7 +114,9 @@ Detailed explanation of each table.
 					DateCreated			--> The DateCreated is the record creation datetime UTC.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.
-	 
+			Tips:
+				The ScopeIDn + BusinessUnitIDn + TableIDn combination can be the Kafka/rabbitMq topic.
+	
 		SysBaseElementComments_Tbl	
 			Contains one or more descriptions/comments/details/explains of each record of the diccionary.
 			It has a defined language, an order when there is more than one description, a type of text format (mimetype), a status and the date of the last update.
@@ -134,9 +135,22 @@ Detailed explanation of each table.
 					DateCreated			--> The DateCreated is the record creation datetime UTC.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.			
-
+			Tips:
+				The ScopeIDn + BusinessUnitIDn + TableIDn combination can be the Kafka/rabbitMq topic.
+	
 	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- 	Used to create the Microservices
+ 	Used to create the Companies
+		SysCompanies_Tbl
+			Contains the companies that use the software. 
+			The Companies exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+			The key for each record:
+				This table hasn't its own key, because in this table you only enable the company to all the system.
+			The unique Key is the union of:
+				CompanyIDn		--> The Company can not be duplicated. Link with the SysBaseElements_Tbl.
+			Common Field/Columns for all tables
+				This table do not have another field, because the store critical information for the system and the record history are set in SysBaseElements_Tbl.
+
+  	Used to create the Microservices
 		SysMicroservices_Tbl
 			Contains the microservices that use the software. 
 			The Microservices exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
@@ -311,13 +325,15 @@ Detailed explanation of each table.
 
 	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	Used to create the Companies and theis Structures
-		SysCompanies_Tbl
-			Contains the companies that use the software. 
-			The Companies exists since you create them in this table. It`s information, of what are they, are in the BaseElement_Tbl table.
+		SysCompanyMicroservice_Tbl
+			Contains the relation between Companies and Microservices. 
+			This is One Company can have multiples Microservices and One Microservices can be used by multiples Companies.
 			The key for each record:
-				This table hasn't its own key, because in this table you only enable the company to all the system.
+				ID		--> is the uniqueidentifier auto generated.
+				IDNum	--> is the autoincrement number auto generated.
 			The unique Key is the union of:
-				BusinessUnitIDn		--> The CompanyIDn is the company that the business unit belong. Link with the SysCompanies_Tbl.
+				CompanyIDn	--> The CompanyIDn is the IDNum. Link with the SysCompanies_Tbl.
+		  		MicroserviceIDn	--> The MicroserviceIDn is the IDNum. Link with the SysMicroservices_Tbl.
 			Common Field/Columns for all tables
 				The objective of these are to store critical information for the system and the record history.
 					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -327,21 +343,20 @@ Detailed explanation of each table.
 					DateCreated			--> The DateCreated is the record creation datetime UTC.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.
-	 
-		SysCompanyTree_Tbl
-			Contains the structure of each company. If you have a economic group in this table can build this structure.
-			Here you can build the tree of the groups companies using the father/son schema.
-			This type of structure allow you to get a individual or group report.
-			<<<<<<<<<<<<<<<<<<<<<<<<<<< Pending of Development >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-		SysBusinessUnits_Tbl
-			Contains the business units that belong to the company.
-			The business unit exists since you create them in this table and you assing it to a Company. It`s information, of what are they, are in the BaseElement_Tbl table.
-			The key for each record:
-				This table hasn't its own key, because in this table you only enable the business unit to a company to all the system.
+		SysCompanyRelations_Tbl
+			Contains the relations between companies. If you have a economic group in this table can build this structure.
+   			Here you can build the tree of the groups companies using the father/son schema.
+			This type of structure allow you to get a individual or group report.
+			But this table does not build the internal structure of the company.
+   			The key for each record:
+				ID		--> is the uniqueidentifier auto generated.
+				IDNum	--> is the autoincrement number auto generated.
 			The unique Key is the union of:
-				BusinessUnitIDn		--> The BusinessUnitIDn is the IDNum of the business unit. Link with the SysBaseElement_Tbl.
-				CompanyIDn			--> The CompanyIDn is the company that the business unit belong. Link with the SysCompany_Tbl.
+   				RelationID	--> The ID of the relation (uniqueidentifier). Link with the SysCompanyRelations_Tbl ID Value.
+	   			RelationLevel	--> The level of the relation, all start with the number 1. 
+	   			RelationOrden	--> The Orden inside the level, all level start with the number 1.
+				CompanyIDn	--> The CompanyIDn is the IDNum of the Company involved in the relation. Link with the SysCompanies_Tbl.
 			Common Field/Columns for all tables
 				The objective of these are to store critical information for the system and the record history.
 					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -351,6 +366,5 @@ Detailed explanation of each table.
 					DateCreated			--> The DateCreated is the record creation datetime UTC.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.
-	 		The table operation:
-				After you create the BusinessUnit in the BaseElement table, you add it to this table and assign it to a specific Company. 
-				One company can have one or more than a BusinessUnit.
+
+		
