@@ -23,7 +23,7 @@ Common Field/Columns for all tables
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- First Delete the table SysEntityFields_Tli if Exits, but first you must to altere the tables that have a referenced foreign key
+-- First Delete the table SysFields_Tli if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced SysBaseElements_Tbl Tables:
@@ -31,12 +31,12 @@ USE systemsdb;
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Second create the SysEntityFields_Tli table
+-- Second create the SysFields_Tli table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysEntityFields_Tli
-DROP TABLE IF EXISTS `systemsdb`.`SysEntityFields_Tli`;
+-- Table: public.SysFields_Tli
+DROP TABLE IF EXISTS `systemsdb`.`SysFields_Tli`;
 
-CREATE TABLE `SysEntityFields_Tli` (
+CREATE TABLE `SysFields_Tli` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
       `FieldIDn` int NOT NULL COMMENT 'The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.',
@@ -51,13 +51,13 @@ CREATE TABLE `SysEntityFields_Tli` (
  	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
 	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
 	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY `IDNum_SefPrikey` (`IDNum`) COMMENT 'The sequence SysEntityFields_Tli generate the nextval',
-	  UNIQUE KEY `ID_SefUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
-	  UNIQUE KEY `IDNum_SefUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
-	  UNIQUE KEY `IDnFieldMicroServ_SefUnique` (`FieldIDn`,`MicroserviceIDn`) COMMENT 'The IDNum must be unique for the Microservice.',
-	  KEY `ID_SefIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
-      KEY `IDNum_SefIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-      KEY `FieldMicroServ_SefIdx` (`FieldIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Microservices Tables.',
+	  PRIMARY KEY `IDNum_SfiPrikey` (`IDNum`) COMMENT 'The sequence SysFields_Tli generate the nextval',
+	  UNIQUE KEY `ID_SfiUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
+	  UNIQUE KEY `IDNum_SfiUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
+	  UNIQUE KEY `IDnFieldMicroServ_SfiUnique` (`FieldIDn`,`MicroserviceIDn`) COMMENT 'The IDNum must be unique for the Microservice.',
+	  KEY `ID_SfiIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
+      KEY `IDNum_SfiIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
+      KEY `FieldMicroServ_SfiIdx` (`FieldIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Microservices Tables.',
 	  CONSTRAINT `FieldIDn_Rel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
 	  CONSTRAINT `MicroserviceIDn_Rel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
@@ -85,13 +85,13 @@ Common Field/Columns for all tables
 
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - SysEntityFields_Tli
+-- Create the Trigger Before Insert - SysFields_Tli
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysEntityFieldsBeforeInsert_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysFieldsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysEntityFieldsBeforeInsert_Trg` BEFORE INSERT ON `SysEntityFields_Tli` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysFieldsBeforeInsert_Trg` BEFORE INSERT ON `SysFields_Tli` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
@@ -104,15 +104,15 @@ DELIMITER ;
 
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - SysEntityFields_Tli
+-- Create the Trigger Before Update - SysFields_Tli
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysEntityFieldsBeforeUpdate_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysFieldsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysEntityFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysEntityFields_Tli` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysFields_Tli` FOR EACH ROW BEGIN
 	-- Create the function to set the new datetimestamp and the history of the record.
-	-- This funtion is used by the SysEntityFields_Tli table before update trigger.
+	-- This funtion is used by the SysFields_Tli table before update trigger.
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
@@ -148,4 +148,4 @@ END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`SysEntityFields_Tli`;
+SELECT * FROM `systemsdb`.`SysFields_Tli`;
