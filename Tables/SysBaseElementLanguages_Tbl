@@ -107,8 +107,8 @@ CREATE TRIGGER `SysBaseElementLanguagesBeforeInsert_Trg` BEFORE INSERT ON `SysBa
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
-	SET new.ScopeIDn = (SELECT TOP 1 ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.CommentIDn);
-	SET new.BusinessUnitIDn = (SELECT TOP 1 BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BusinessUnitIDn);
+	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.CommentIDn LIMIT 1);
+	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BusinessUnitIDn LIMIT 1);
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
 END$$
