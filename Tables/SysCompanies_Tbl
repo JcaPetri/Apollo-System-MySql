@@ -1,0 +1,50 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysCompanies_Tbl table
+/*Contains the companies that use the software. 
+The Companies exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+The key for each record:
+  This table hasn't its own key, because in this table you only enable the company to all the system.
+The unique Key is the union of:
+  CompanyIDn		--> The Company can not be duplicated. Link with the SysBaseElements_Tbl.
+Common Field/Columns for all tables
+  This table do not have another field, because the store critical information for the system and the record history are set in SysBaseElements_Tbl.
+*/
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First Delete the table SysCompanies_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced SysBaseElements_Tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysBaseElements_Tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the SysCompanies_Tbl table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysCompanies_Tbl
+DROP TABLE IF EXISTS `systemsdb`.`SysCompanies_Tbl`;
+
+CREATE TABLE `SysCompanies_Tbl` (
+	  `CompanyIDn` int NOT NULL COMMENT 'The CompanyIDn is the IdNum of the Company to which is anable.',
+	  PRIMARY KEY `CompanyIDn_ScoPrikey` (`CompanyIDn`) COMMENT 'The IDNum is generated in the SysBaseElement_Tbl.',
+	  UNIQUE KEY `CompanyIDn_ScoUnique` (`CompanyIDn`) COMMENT 'The IDNum must be unique.',
+	  KEY `Company_ScoIdx` (`CompanyIDn` ASC) VISIBLE COMMENT 'To optimize the search of.',
+	  CONSTRAINT `CompanyIDn_Rel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB 
+	AUTO_INCREMENT=0 
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+    COMMENT='Contains the companies that use the software. 
+The Companies exists since you create them in this table. It`s information, of what are they, are in the SysBaseElements_Tbl table.
+The key for each record:
+  This table hasn't its own key, because in this table you only enable the company to all the system.
+The unique Key is the union of:
+  CompanyIDn		--> The Company can not be duplicated. Link with the SysBaseElements_Tbl.
+Common Field/Columns for all tables
+  This table do not have another field, because the store critical information for the system and the record history are set in SysBaseElements_Tbl.';
+
+-- Lista los datos de la tabla
+SELECT * FROM `systemsdb`.`SysCompanies_Tbl`;
+
+
+
