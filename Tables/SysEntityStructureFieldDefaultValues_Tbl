@@ -63,8 +63,8 @@ CREATE TABLE `SysEntityStructureFieldDefaultValues_Tbl` (
 	  KEY `ID_SedIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_SedIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `DefVerEntStruct_SedIdx` (`DefaultVersionIDn` ASC, `EntityStructureIDn` ASC) VISIBLE COMMENT 'To optimize the search of one default version for an Entity structure.',
-	  CONSTRAINT `DefaultVersionIDn_Rel` FOREIGN KEY (`DefaultVersionIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `EntityStructureIDn_Rel` FOREIGN KEY (`EntityStructureIDn`) REFERENCES `systemsdb`.`SysEntityStructures_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `DefaultVersionIDn_SedRel` FOREIGN KEY (`DefaultVersionIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `EntityStructureIDn_SedRel` FOREIGN KEY (`EntityStructureIDn`) REFERENCES `systemsdb`.`SysEntityStructures_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
