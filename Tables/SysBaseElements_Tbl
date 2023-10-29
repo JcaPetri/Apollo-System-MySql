@@ -1,50 +1,59 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysBaseElements_Tbl table
 /* Contains the diccionary of all system elements of the Microservice.
-	The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
-	In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
-	To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
-	The key for each record:
-		ID		--> is the uniqueidentifier auto generated.
-		IDNum	--> is the autoincrement number auto generated.
-	The unique Key is the union of:
-	  IDName     		-> is the readable code by the user.
-	  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
-	  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
-	  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-	Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
-				Only exist when you create the code in the specific table.
-		Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
-	Modification Rules:
-		You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
-		Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
-		If you want to change the code and it is in many places, the system must generate another code for the new value
-		To change this value, it must be done by the administrator. 
-		It is best to never change it.
-	Comments:
-		In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
-		Example:
-			In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, java entities, classes, etc.
-			In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system.
-			In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
-			In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
-	Tips:
-		The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.	 (+ MicroserviceIDn + )
+The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
+In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
+To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+  IDName     		-> is the readable code by the user.
+  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
+  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
+  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
+Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
+			Only exist when you create the code in the specific table.
+	Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
+Modification Rules:
+	You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
+	Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
+	If you want to change the code and it is in many places, the system must generate another code for the new value
+	To change this value, it must be done by the administrator. 
+	It is best to never change it.
+Common Field/Columns for all tables
+	The objective of these are to store critical information for the system and the record history.
+		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+		DateCreated			--> The DateCreated is the record creation datetime UTC.
+		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+		TableHistory		-->	The TableHistory contain then change history of each column.
+Comments:
+	In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
+	Example:
+		In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, java entities, classes, etc.
+		In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system.
+		In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
+		In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
+Tips:
+	The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.
 */
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Delete the table BaseElement_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+-- Delete the table SysBaseElements_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced BaseElement_Tbl Tables:
+-- The referenced SysBaseElements_Tbl Tables:
 ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;
 ALTER TABLE `systemsdb`.`SysEntities_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`;     
 
 -- After deleted the referenced, you can delete the table
-DROP TABLE IF EXISTS `systemsdb`.`BaseElement_Tbl`;
+DROP TABLE IF EXISTS `systemsdb`.`SysBaseElements_Tbl`;
 
-CREATE TABLE `BaseElement_Tbl` (
+CREATE TABLE `SysBaseElements_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
 	  `IDName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The IDName is the user-readable code for the selected language.',
@@ -77,7 +86,7 @@ CREATE TABLE `BaseElement_Tbl` (
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-    COMMENT='Contains the diccionary of all system elements of the Microservice.
+	COMMENT='Contains the diccionary of all system elements of the Microservice.
 The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
 In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
 To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
@@ -89,7 +98,7 @@ The unique Key is the union of:
   ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
   BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
   LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-Important: when you create the element/object in this tabel, this element do not exits for the software. This table is like a dictionary.
+Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
 			Only exist when you create the code in the specific table.
 	Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
 Modification Rules:
@@ -98,23 +107,40 @@ Modification Rules:
 	If you want to change the code and it is in many places, the system must generate another code for the new value
 	To change this value, it must be done by the administrator. 
 	It is best to never change it.
-			 ';
+Common Field/Columns for all tables
+	The objective of these are to store critical information for the system and the record history.
+		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+		DateCreated			--> The DateCreated is the record creation datetime UTC.
+		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+		TableHistory		-->	The TableHistory contain then change history of each column.
+Comments:
+	In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
+	Example:
+		In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, java entities, classes, etc.
+		In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system.
+		In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
+		In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
+Tips:
+	The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.';
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - BaseElement_Tbl
+-- Create the Trigger Before Insert - SysBaseElements_Tbl
 USE systemsdb;
 DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `BaseElement_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElements_Tbl` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
     IF new.IDCode IS NULL OR new.IDCode = 0 OR new.IDCode = '' THEN
-		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `systemsdb`.`BaseElement_Tbl` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
+		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `systemsdb`.`SysBaseElements_Tbl` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
         -- Assign the numeric auto-incremental IDCode for this ScopeIDn and BusinessUnitIDn, because this number must be unique.
 	END IF;
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
@@ -123,7 +149,7 @@ END$$
 DELIMITER ;
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - BaseElement_Tbl
+-- Create the Trigger Before Update - SysBaseElements_Tbl
 -- en caso que desde Java no pasen la informacion de estos campos,
 -- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
 USE systemsdb;
@@ -131,7 +157,7 @@ DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `BaseElement_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElements_Tbl` FOR EACH ROW BEGIN
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
@@ -173,4 +199,4 @@ END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`BaseElement_Tbl`;
+SELECT * FROM `systemsdb`.`SysBaseElements_Tbl`;
