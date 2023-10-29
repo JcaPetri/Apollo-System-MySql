@@ -16,7 +16,7 @@ Common Field/Columns for all tables
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
 -- The referenced SysBaseElements_Tbl Tables:
--- ALTER TABLE `systemsdb`.`SysBaseElements_Tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+ALTER TABLE `systemsdb`.`SysCompanyMicroservice_Tbl`  DROP FOREIGN KEY `CompanyIDn_Rel`;
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
