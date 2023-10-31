@@ -42,7 +42,7 @@ DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementLanguages_Tbl`;
 CREATE TABLE `SysBaseElementLanguages_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
-	  `DataElementLanguageIDn` int NOT NULL COMMENT 'The IDNameStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.',
+	  `BaseElementLanguageIDn` int NOT NULL COMMENT 'The BaseElementLanguageIDn is the IDNum of the IDName from the SysBaseElement, which has the IDName in other languages than default.',
       `IDName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The IDName is the user-readable code for the selected language.',
 	  `IDNameStructureIDn` int NOT NULL COMMENT 'The IDNameStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.',
 	  `ScopeIDn` int NOT NULL COMMENT 'The ScopeIDn is the IdNum of the Scope, the Name must be unique for the scope of application, usually a Table. It inherited from SysBaseElements_Tbl.',
@@ -63,7 +63,7 @@ CREATE TABLE `SysBaseElementLanguages_Tbl` (
 	  UNIQUE KEY `IDNameScopeBusUnitLang_SblUnique` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`) COMMENT 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.',
 	  KEY `ID_SblIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
 	  KEY `IDNum_SblIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-	  CONSTRAINT `DataElementLanguageIDn_Rel` FOREIGN KEY (`DataElementLanguageIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `BaseElementLanguageIDn_Rel` FOREIGN KEY (`BaseElementLanguageIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -107,8 +107,8 @@ CREATE TRIGGER `SysBaseElementLanguagesBeforeInsert_Trg` BEFORE INSERT ON `SysBa
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
-	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.CommentIDn LIMIT 1);
-	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BusinessUnitIDn LIMIT 1);
+	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementLanguageIDn LIMIT 1);
+	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementLanguageIDn LIMIT 1);
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
 END$$
@@ -138,7 +138,7 @@ CREATE TRIGGER `SysBaseElementLanguagesBeforeUpdate_Trg` BEFORE UPDATE ON `SysBa
 		SET v_TableHistory = '';
 		-- IDNum, this value never changes.
 		-- ID, this value never changes.
-		IF NEW.DataElementLanguageIDn <> OLD.DataElementLanguageIDn THEN SET v_TableHistory := OLD.IDName; ELSE SET v_TableHistory := '†'; END IF;
+		IF NEW.BaseElementLanguageIDn <> OLD.BaseElementLanguageIDn THEN SET v_TableHistory := OLD.BaseElementLanguageIDn; ELSE SET v_TableHistory := '†'; END IF;
 		IF NEW.IDName <> OLD.IDName THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDName); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.IDNameStructureIDn <> OLD.IDNameStructureIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDNameStructureIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.ScopeIDn <> OLD.ScopeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.ScopeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
