@@ -35,7 +35,7 @@ DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementComments_Tbl`;
 CREATE TABLE `SysBaseElementComments_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
-      `CommentIDn` int NOT NULL COMMENT 'The CommentIDn is the IDNum of the SysBaseElements_Tbl element, which have the comments.',
+      `BaseElementCommentIDn` int NOT NULL COMMENT 'The BaseElementCommentIDn is the IDNum of the SysBaseElements_Tbl element, which have the comments.',
 	  `LanguageIDn` int NOT NULL COMMENT 'The LanguageIDn is the IdNum of the language in which the comment is defined.',
       `CommentOrder` tinyint NOT NULL COMMENT 'The order of the comments.',
 	  `TextFormatIDn` int NOT NULL COMMENT 'The TextFormatIDn is the IdNum of the format text in which the comment is defined.',
@@ -56,7 +56,7 @@ CREATE TABLE `SysBaseElementComments_Tbl` (
 	  UNIQUE KEY `IDNum_SbcUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
 	  KEY `ID_SbcIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
 	  KEY `IDNum_SbcIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-	  CONSTRAINT `CommentIDn_Rel` FOREIGN KEY (`CommentIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `BaseElementCommentIDn_SbcRel` FOREIGN KEY (`BaseElementCommentIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -93,8 +93,8 @@ CREATE TRIGGER `SysBaseElementCommentsBeforeInsert_Trg` BEFORE INSERT ON `SysBas
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
-	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.CommentIDn LIMIT 1);
-	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BusinessUnitIDn LIMIT 1);
+	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementCommentIDn LIMIT 1);
+	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementCommentIDn LIMIT 1);
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
 END$$
@@ -124,7 +124,7 @@ CREATE TRIGGER `SysBaseElementCommentsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBas
 		SET v_TableHistory = '';
 		-- IDNum, this value never changes.
 		-- ID, this value never changes.
-		IF NEW.CommentIDn <> OLD.CommentIDn THEN SET v_TableHistory := OLD.CommentIDn; ELSE SET v_TableHistory := '†'; END IF;
+		IF NEW.BaseElementCommentIDn <> OLD.BaseElementCommentIDn THEN SET v_TableHistory := OLD.BaseElementCommentIDn; ELSE SET v_TableHistory := '†'; END IF;
         IF NEW.LanguageIDn <> OLD.LanguageIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LanguageIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
         IF NEW.CommentOrder <> OLD.CommentOrder THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CommentOrder); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
         IF NEW.TextFormatIDn <> OLD.TextFormatIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TextFormatIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
