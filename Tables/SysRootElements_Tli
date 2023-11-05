@@ -22,7 +22,7 @@ Common Field/Columns for all tables
 		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 		TableHistory		-->	The TableHistory contain then change history of each column.
 Tips:
-	The RootElementIDn + MicroserviceIDn combination can be the Kafka/rabbitMq topic.
+	The SysRootElements_Tli table name + MicroserviceIDn combination can be the Kafka/rabbitMq topic.
 */
 
 
