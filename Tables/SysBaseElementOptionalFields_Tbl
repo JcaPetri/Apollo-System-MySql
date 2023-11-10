@@ -1,0 +1,150 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysBaseElementOptionalFields_Tbl table
+/*Contains the Optional Properties of the Base Elements records.
+This optional property is used to set up a property for a specific element. The others elements do not have this property assigned.
+In each record you specify the property and the value it assumes for each item.
+The key for each record:
+  ID		--> is the uniqueidentifier auto generated.
+  IDNum	--> is the autoincrement number auto generated.  (This field in external tables is called BaseElementOptionalFieldIDn.)
+The unique Key is the union of:
+  TableFieldIDn     -> the table field ArtSysEntityStructures_Mir, this table is linked with the System database throw Kafka.
+  BaseElementIDn		-> the element from the SysBaseElements_Tbl. Linked with SysBaseElements_Tbl.
+  Unique = One TableField must be unique for each BaseElement.
+Kafka/RabbitMQ:
+  The BaseElementIDn + TableIDn combination can be the topic.  
+Common Field/Columns for all tables
+  The objective of these are to store critical information for the system and the record history.
+    StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+    CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+    LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+    OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+    DateCreated			--> The DateCreated is the record creation datetime UTC.
+    DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+    TableHistory		-->	The TableHistory contain then change history of each column.*/
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Delete the table SysBaseElementOptionalFields_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced SysBaseElementOptionalFields_Tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysMicroservices_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+
+-- After deleted the referenced, you can delete the table
+DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementOptionalFields_Tbl`;
+
+CREATE TABLE `SysBaseElementOptionalFields_Tbl` (
+	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
+	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
+    `TableFieldIDn` integer NOT NULL COMMENT 'The TableFieldIDn is the IDNum of the field property. Link with the System database - SysTableFields.',
+    `BaseElementIDn` integer NOT NULL COMMENT 'The BaseElementIDn is the IDNum of the element. Link with the SysBaseElements_Tbl.',
+    `FieldValueTypeIDn` integer NOT NULL COMMENT 'TThe FieldValueTypeIDn is the IDNum of the type property. Its come from the SysBaseElements_Tbl.',
+    `FieldValue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The FieldValue is a numeric/text/etc value of the property, this value is not standar and can not be multilanguages. If the FieldValueTypeIDn is equal to IDNumType, the value represent an IDNum of the SysBaseElements_Tbl.',
+    `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not. Link with the SysBaseElements_Tbl.',
+	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record. Link with the UserDataElements_Mir.',
+	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record. Link with the UserDataElements_Mir.',
+	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner. Link with the UserDataElements_Mir.',
+	  `DateCreated` datetime NOT NULL COMMENT 'The DateCreated is the record creation date with UTC.',
+	  `DateTimeStamp` timestamp NOT NULL COMMENT 'The DateTimeStamp is the date of the last modification of the record with UTC.',
+ 	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone. Link with the SysBaseElements_Tbl.',
+	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
+	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
+	  PRIMARY KEY `ID_SeoKey` (`IDNum`) COMMENT 'The sequence SysBaseElementOptionalFields_Tbl_seq generate the nextval',
+	  UNIQUE KEY `ID_SeoUni` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
+    UNIQUE KEY `IDNum_SeoUni` (`IDNum`) COMMENT 'The IDNum must be unique.',
+		UNIQUE KEY `TblFieldBaseElem_SeoUni` (`TableFieldIDn`, `BaseElementIDn`) COMMENT 'The TableField must be unique for a BaseElementIDn.',
+	  KEY `ID_SeoIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
+	  KEY `IDNum_SeoIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
+		KEY `TblFieldBaseElem_SeoIdx` (`TableFieldIDn` ASC, `BaseElementIDn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Tables.',
+    CONSTRAINT `TableFieldIDn_SeoRel` FOREIGN KEY (`TableFieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `BaseElementIDn_SeoRel` FOREIGN KEY (`BaseElementIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB 
+	AUTO_INCREMENT=0 
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+	COMMENT='Contains the Optional Properties of the Base Elements records.
+This optional property is used to set up a property for a specific element. The others elements do not have this property assigned.
+In each record you specify the property and the value it assumes for each item.
+The key for each record:
+  ID		--> is the uniqueidentifier auto generated.
+  IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+  TableFieldIDn     -> the table field ArtSysEntityStructures_Mir, this table is linked with the System database throw Kafka.
+  BaseElementIDn		-> the element from the SysBaseElements_Tbl. Linked with SysBaseElements_Tbl.
+  Unique = One TableField must be unique for each DataElement.
+Kafka/RabbitMQ:
+  The BaseElementIDn + TableIDn combination can be the topic.  
+Common Field/Columns for all tables
+  The objective of these are to store critical information for the system and the record history.
+    StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+    CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+    LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+    OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+    DateCreated			--> The DateCreated is the record creation datetime UTC.
+    DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+    TableHistory		-->	The TableHistory contain then change history of each column.';
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Insert - SysBaseElementOptionalFields_Tbl
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementOptionalFieldsBeforeInsert_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysBaseElementOptionalFieldsBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElementOptionalFields_Tbl` FOR EACH ROW BEGIN
+	-- In the case, which the request do not give this value, MySql created it.
+	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
+	IF new.ID IS NULL OR new.ID = '' THEN
+		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
+	END IF;
+	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+END$$
+DELIMITER ;
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Update - SysBaseElementOptionalFields_Tbl
+-- en caso que desde Java no pasen la informacion de estos campos,
+-- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementOptionalFieldsBeforeUpdate_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysBaseElementOptionalFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElementOptionalFields_Tbl` FOR EACH ROW BEGIN
+	DECLARE v_TableHistory text;
+	DECLARE v_TableHistoryOld text;
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+    IF new.TableHistory = 'SetNull' THEN
+		SET new.TableHistory = null;
+    ELSEIF new.TableHistory = 'SetOff' THEN
+		SET new.TableHistory = old.TableHistory;
+    ELSE
+		-- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
+		-- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
+		SET v_TableHistoryOld := old.TableHistory;
+		SET v_TableHistory = '';
+		-- IDNum, this value never changes.
+		-- ID, this value never changes.
+		IF NEW.TableFieldIDn <> OLD.TableFieldIDn THEN SET v_TableHistory := OLD.TableFieldIDn; ELSE SET v_TableHistory := '†'; END IF;
+    IF NEW.BaseElementIDn <> OLD.BaseElementIDn THEN SET v_TableHistory := OLD.BaseElementIDn; ELSE SET v_TableHistory := '†'; END IF;
+    IF NEW.FieldValueTypeIDn <> OLD.FieldValueTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldValueTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.FieldValue <> OLD.FieldValue THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldValue); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',NEW.DateCreated); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.DateTimeStamp <> OLD.DateTimeStamp THEN SET v_TableHistory := concat(v_TableHistory,'†',OLD.DateTimeStamp); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzNameIDn <> OLD.TzNameIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzNameIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzOffset <> OLD.TzOffset THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzOffset); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			SET NEW.TableHistory := v_TableHistory;
+		ELSE
+			SET NEW.TableHistory := concat(v_TableHistory,'‡',v_TableHistory);
+		END IF;
+	END IF;
+END$$
+DELIMITER ;
+
+-- Lista los datos de la tabla
+SELECT * FROM `systemsdb`.`SysBaseElementOptionalFields_Tbl`;
