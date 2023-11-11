@@ -42,13 +42,13 @@ DROP TABLE IF EXISTS `systemsdb`.`SysEntityStructures_Tbl`;
 CREATE TABLE `SysEntityStructures_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
-      `FieldIDn` int NOT NULL COMMENT 'The FieldIDn is the IDNum of the field/column of the entity. Link with the SysEntityFields_Tbl.',
+    `FieldIDn` int NOT NULL COMMENT 'The FieldIDn is the IDNum of the field/column of the entity. Link with the SysEntityFields_Tbl.',
 	  `EntityIDn` integer NOT NULL COMMENT 'The EntityIDn is the IDNum of the entity. Link with the SysEntities_Tbl. The entity is set to a microservice and business unit.',
-      `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
+    `MicroserviceIDn` int NOT NULL COMMENT 'The MicroServiceIDn is the IdNum of the Microservice to which the IDName is assigned.',
 	  `DataTypeIDn` integer NOT NULL COMMENT 'The DataTypeIDn is the IDNum of the type of data that you can enter in the field. Link with the SysBaseElements_Tbl.',
-      `FieldOrder` integer NOT NULL COMMENT 'The FieldOrder is an ascendent number to order the fields/columns. If the user don`t define, the system insert an autonumeric increment number.',
-      `AdmitDefaultValue` boolean NOT NULL COMMENT 'The AdmitDefaultValue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.',
-      `FieldNotNull` boolean NOT NULL COMMENT 'The FieldNotNull, if the value is 1 the field can`t be null, otherwise the null value is allowed.',
+    `FieldOrder` integer NOT NULL COMMENT 'The FieldOrder is an ascendent number to order the fields/columns. If the user don`t define, the system insert an autonumeric increment number.',
+    `AdmitDefaultValue` boolean NOT NULL COMMENT 'The AdmitDefaultValue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.',
+    `FieldNotNull` boolean NOT NULL COMMENT 'The FieldNotNull, if the value is 1 the field can`t be null, otherwise the null value is allowed.',
 	  `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
 	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
 	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
@@ -67,7 +67,7 @@ CREATE TABLE `SysEntityStructures_Tbl` (
       KEY `FieldEntMicrBusUnit_SefIdx` (`FieldIDn` ASC, `EntityIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one fields for an Entity.',
 	  CONSTRAINT `FieldIDn_SefRel` FOREIGN KEY (`FieldIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
 	  CONSTRAINT `EntityIDn_SefRel` FOREIGN KEY (`EntityIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `MicroserviceIDn_SefRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `MicroserviceIDn_SefRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
