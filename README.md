@@ -165,6 +165,7 @@ Detailed explanation of each table.
 	
 		SysBaseElementKafka_Tbl	
 			Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
+	 		With this table the software manages what elements will be in each microservice.
 			In the SysBaseElemnets_Tbl is created the KaftaTopic Scope and inside this scope you create the topics.
 	 		In this table is assigned the BaseElement to a specific Topic. You can assign one elemento to more than one Topic.
 			After you create or update and element, the system get the data of this table to know wich queues must be updated.
