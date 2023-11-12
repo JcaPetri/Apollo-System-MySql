@@ -25,8 +25,10 @@ Definitions:
 Structure are as follows:
 	Used to create the main elements
 		SysBaseElements_Tbl	--> Contains the diccionary of all system elements of the Microservice.
+  	SysBaseElementOthersFiels_Tbl	--> Contains the optional fields/columns of the data elements.
 		SysBaseElementLanguages_Tbl	--> Contains the meaning of the diccionary in other languages.
 		SysBaseElementComments_Tbl	--> Contains one or more comments/details/explains of each record of the diccionary.
+		SysBaseElementKafka_Tbl	--> Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
 	Used to create multiples tables
 		SysRootElements_Tli	--> This is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice and BusinessUnit.
 	Used to create the software structure
@@ -88,6 +90,29 @@ Detailed explanation of each table.
 					In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
 			Tips:
 				The ScopeIDn + BusinessUnitIDn + TableIDn combination can be the Kafka/rabbitMq topic.
+    
+		SysBaseElementOthersFiels_Tbl	
+			Contains the Others Fields of the Data Elements records.
+			This others fiedls are used to set up a new properties for a specific element. The others elements do not have this properties assigned.
+			In each record you specify the property and the value it assumes for each item.
+			The key for each record:
+			  ID		--> is the uniqueidentifier auto generated.
+			  IDNum	--> is the autoincrement number auto generated.
+			The unique Key is the union of:
+			  TableFieldIDn     -> the TableFieldIDn is the Field/Column that you add to the record. Linked with SysBaseElements_Tbl.
+			  BaseElementIDn		-> the BaseElementIDn is the record element, which recieve the new property. Linked with SysBaseElements_Tbl.
+			  Unique = One TableField must be unique for each BaseElement.
+			Kafka/RabbitMQ:
+			  The DataElementIDn + TableIDn combination can be the topic.  
+			Common Field/Columns for all tables
+			  The objective of these are to store critical information for the system and the record history.
+			    StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+			    CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+			    LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+			    OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+			    DateCreated			--> The DateCreated is the record creation datetime UTC.
+			    DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+			    TableHistory		-->	The TableHistory contain then change history of each column.
 
 		SysBaseElementLanguages_Tbl	
 			Contains the meaning of the diccionary in another languages than the default.
@@ -138,7 +163,33 @@ Detailed explanation of each table.
 			Tips:
 				The ScopeIDn + BusinessUnitIDn + TableIDn combination can be the Kafka/rabbitMq topic.
 	
-	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		SysBaseElementKafka_Tbl	
+			Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
+			In the SysBaseElemnets_Tbl is created the KaftaTopic Scope and inside this scope you create the topics.
+	 		In this table is assigned the BaseElement to a specific Topic. You can assign one elemento to more than one Topic.
+			After you create or update and element, the system get the data of this table to know wich queues must be updated.
+	 		If BaseElement is a Scope, all elements it contains must be updated.
+	 		The key for each record:
+				ID		--> is the uniqueidentifier auto generated.
+				IDNum	--> is the autoincrement number auto generated.
+			The unique Key is the union of:
+			  KafkaTopicIDn     -> the KafkaTopicIDn is the IDNum of queue Topic. Linked with SysBaseElements_Tbl.
+			  BaseElementIDn		-> the BaseElementIDn is the element, this could be an element or scope. Linked with SysBaseElements_Tbl.
+			  Unique = One KafkaTopicIDn must be unique for each BaseElement.
+			Common Field/Columns for all tables
+				The objective of these are to store critical information for the system and the record history.
+					StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+					CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+					LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+					OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+					DateCreated			--> The DateCreated is the record creation datetime UTC.
+					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+					TableHistory		-->	The TableHistory contain then change history of each column.			
+
+
+ 
+ 
+ 	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  	Used to create the Companies
 		SysCompanies_Tbl
 			Contains the companies that use the software. 
