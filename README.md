@@ -22,6 +22,14 @@ Definitions:
 		ID		--> is the uniqueidentifier auto generated.
 		IDNum	--> is the autoincrement number auto generated.
 
+Importan: each Scope must have a table.
+When you create a Scope is a Table, which could be real or virtual, you need to create:
+	EntityStructures_Tbl --> here you set up wich field it has.
+ 	EntityFieldProperties_Tbl	--> here you set up the properties of each Field. (DataType, Lenght, etc)
+	EntityFieldDefaultValues_Tbl	--> here you set up the default value, when the user do not send it. So the user fill only the changed values.
+ 
+
+
 Structure are as follows:
 	Used to create the main elements
 		SysBaseElements_Tbl	--> Contains the diccionary of all system elements of the Microservice.
