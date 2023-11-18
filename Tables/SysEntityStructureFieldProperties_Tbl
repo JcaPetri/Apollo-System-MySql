@@ -97,11 +97,12 @@ DROP TABLE IF EXISTS `systemsdb`.`SysEntityStructureFieldProperties_Tbl`;
 CREATE TABLE `SysEntityStructureFieldProperties_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
-      `FieldPropertyIDn` int NOT NULL COMMENT 'The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.',
+    `FieldPropertyIDn` int NOT NULL COMMENT 'The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.',
 	  `EntityStructureIDn` integer NOT NULL COMMENT 'The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.',
-      `FieldValueTypeIDn` integer NOT NULL COMMENT 'The FieldValueTypeIDn is the IDNum of the value type (IDNum, Numeric, Text, etc). Its come from the SysBaseElements_Tbl). When the FieldValueType is IDNum, the number of the FieldValue is a references of the SysBaseElements_Tbl.',
-      `FieldValue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The FieldValue is a numeric/text/etc value of the property, this value is not standar and can´t be multilanguage. If the value is an IDNumType, the meaning is in the SysEntityStructure_Tbl.',
-      `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
+    `FieldValueTypeIDn` integer NOT NULL COMMENT 'The FieldValueTypeIDn is the IDNum of the value type (IDNum, Numeric, Text, etc). Its come from the SysBaseElements_Tbl). When the FieldValueType is IDNum, the number of the FieldValue is a references of the SysBaseElements_Tbl.',
+    `FieldValue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The FieldValue is a numeric/text/etc value of the property, this value is not standar and can´t be multilanguage. If the value is an IDNumType, the meaning is in the SysEntityStructure_Tbl.',
+		`IDFieldStructureIDn` integer NOT NULL COMMENT 'The IDNameStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.',
+		`StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
 	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
 	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
 	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner.',
@@ -195,7 +196,8 @@ CREATE TRIGGER `SysEntityStructureFieldPropertiesBeforeUpdate_Trg` BEFORE UPDATE
         IF NEW.EntityStructureIDn <> OLD.EntityStructureIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.EntityStructureIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.FieldValueTypeIDn <> OLD.FieldValueTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldValueTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.FieldValue <> OLD.FieldValue THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.FieldValue); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.IDFieldStructureIDn <> OLD.IDFieldStructureIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDFieldStructureIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
