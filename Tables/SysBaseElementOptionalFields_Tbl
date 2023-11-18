@@ -1,7 +1,7 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysBaseElementOptionalFields_Tbl table
-/*Contains the Optional Properties of the Base Elements records.
-This optional property is used to set up a property for a specific element. The others elements do not have this property assigned.
+-- Create the SysBaseElementOtherFields_Tbl table
+/*Contains the Other Properties of the Base Elements records.
+This other property, wich could be optional or not, is used to set up a property for a specific element. The others elements do not have this property assigned.
 In each record you specify the property and the value it assumes for each item.
 The key for each record:
   ID		--> is the uniqueidentifier auto generated.
@@ -24,16 +24,16 @@ Common Field/Columns for all tables
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Delete the table SysBaseElementOptionalFields_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+-- Delete the table SysBaseElementOtherFields_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced SysBaseElementOptionalFields_Tbl Tables:
+-- The referenced SysBaseElementOtherFields_Tbl Tables:
 -- ALTER TABLE `systemsdb`.`SysMicroservices_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
 
 -- After deleted the referenced, you can delete the table
-DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementOptionalFields_Tbl`;
+DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementOtherFields_Tbl`;
 
-CREATE TABLE `SysBaseElementOptionalFields_Tbl` (
+CREATE TABLE `SysBaseElementOtherFields_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
     `TableFieldIDn` integer NOT NULL COMMENT 'The TableFieldIDn is the IDNum of the field property. Link with the System database - SysTableFields.',
@@ -49,7 +49,7 @@ CREATE TABLE `SysBaseElementOptionalFields_Tbl` (
  	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone. Link with the SysBaseElements_Tbl.',
 	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
 	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY `ID_SeoKey` (`IDNum`) COMMENT 'The sequence SysBaseElementOptionalFields_Tbl_seq generate the nextval',
+	  PRIMARY KEY `ID_SeoKey` (`IDNum`) COMMENT 'The sequence SysBaseElementOtherFields_Tbl_seq generate the nextval',
 	  UNIQUE KEY `ID_SeoUni` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
     UNIQUE KEY `IDNum_SeoUni` (`IDNum`) COMMENT 'The IDNum must be unique.',
 		UNIQUE KEY `TblFieldBaseElem_SeoUni` (`TableFieldIDn`, `BaseElementIDn`) COMMENT 'The TableField must be unique for a BaseElementIDn.',
@@ -61,16 +61,16 @@ CREATE TABLE `SysBaseElementOptionalFields_Tbl` (
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-	COMMENT='Contains the Optional Properties of the Base Elements records.
-This optional property is used to set up a property for a specific element. The others elements do not have this property assigned.
+	COMMENT='Contains the Other Properties of the Base Elements records.
+This other property, wich could be optional or not, is used to set up a property for a specific element. The others elements do not have this property assigned.
 In each record you specify the property and the value it assumes for each item.
 The key for each record:
   ID		--> is the uniqueidentifier auto generated.
-  IDNum	--> is the autoincrement number auto generated.
+  IDNum	--> is the autoincrement number auto generated.  (This field in external tables is called BaseElementOptionalFieldIDn.)
 The unique Key is the union of:
   TableFieldIDn     -> the table field ArtSysEntityStructures_Mir, this table is linked with the System database throw Kafka.
   BaseElementIDn		-> the element from the SysBaseElements_Tbl. Linked with SysBaseElements_Tbl.
-  Unique = One TableField must be unique for each DataElement.
+  Unique = One TableField must be unique for each BaseElement.
 Kafka/RabbitMQ:
   The BaseElementIDn + TableIDn combination can be the topic.  
 Common Field/Columns for all tables
@@ -84,13 +84,13 @@ Common Field/Columns for all tables
     TableHistory		-->	The TableHistory contain then change history of each column.';
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - SysBaseElementOptionalFields_Tbl
+-- Create the Trigger Before Insert - SysBaseElementOtherFields_Tbl
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementOptionalFieldsBeforeInsert_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementOtherFieldsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementOptionalFieldsBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElementOptionalFields_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementOtherFieldsBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElementOtherFields_Tbl` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
@@ -102,15 +102,15 @@ END$$
 DELIMITER ;
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - SysBaseElementOptionalFields_Tbl
+-- Create the Trigger Before Update - SysBaseElementOtherFields_Tbl
 -- en caso que desde Java no pasen la informacion de estos campos,
 -- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementOptionalFieldsBeforeUpdate_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementOtherFieldsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementOptionalFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElementOptionalFields_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementOtherFieldsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElementOtherFields_Tbl` FOR EACH ROW BEGIN
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
@@ -147,4 +147,4 @@ END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`SysBaseElementOptionalFields_Tbl`;
+SELECT * FROM `systemsdb`.`SysBaseElementOtherFields_Tbl`;
