@@ -6,8 +6,8 @@ The key for each record:
   ID		--> is the uniqueidentifier auto generated.
   IDNum	--> is the autoincrement number auto generated.
 The unique Key is the union of:
-    CompanyIDn	--> The CompanyIDn is the IDNum. Link with the SysCompanies_Tbl.
-    MicroserviceIDn	--> The MicroserviceIDn is the IDNum. Link with the SysMicroservices_Tbl.
+    CompanyIDn	--> The CompanyIDn is the IDNum. Link with the SysBaseElements_Tbl.
+    MicroserviceIDn	--> The MicroserviceIDn is the IDNum. Link with the SysBaseElements_Tbl.
 Common Field/Columns for all tables
   The objective of these are to store critical information for the system and the record history.
     StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
@@ -55,8 +55,8 @@ CREATE TABLE `SysCompanyMicroservice_Tbl` (
 	  KEY `ID_ScmIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
       KEY `IDNum_ScmIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
       KEY `CompanyMicroServ_ScmIdx` (`CompanyIDn` ASC, `MicroserviceIDn` ASC) VISIBLE COMMENT 'To optimize the search of one Company and a Microservices.',
-	  CONSTRAINT `CompanyIDn_ScmRel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysCompanies_Tbl` (`CompanyIDn`) ON DELETE CASCADE ON UPDATE CASCADE,
-	  CONSTRAINT `MicroserviceIDn_ScmRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysMicroservices_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `CompanyIDn_ScmRel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`CompanyIDn`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `MicroserviceIDn_ScmRel` FOREIGN KEY (`MicroserviceIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`MicroserviceIDn`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -66,8 +66,8 @@ The key for each record:
   ID		--> is the uniqueidentifier auto generated.
   IDNum	--> is the autoincrement number auto generated.
 The unique Key is the union of:
-  CompanyIDn	--> The CompanyIDn is the IDNum. Link with the SysCompanies_Tbl.
-    MicroserviceIDn	--> The MicroserviceIDn is the IDNum. Link with the SysMicroservices_Tbl.
+    CompanyIDn	--> The CompanyIDn is the IDNum. Link with the SysBaseElements_Tbl.
+    MicroserviceIDn	--> The MicroserviceIDn is the IDNum. Link with the SysBaseElements_Tbl.
 Common Field/Columns for all tables
   The objective of these are to store critical information for the system and the record history.
     StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
