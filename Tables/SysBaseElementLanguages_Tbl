@@ -9,7 +9,7 @@ The key for each record:
     IDNum	--> is the autoincrement number auto generated.
 The unique Key is the union of:
     -- This three values are defined by the user.
-    BaseElementLanguageIDn	--> the IdNum of the element that has another languages meaning. It is created in the SysBaseElements_Tbl.
+    BaseElementIDn	--> the IdNum of the element that has another languages meaning. It is created in the SysBaseElements_Tbl.
     NameID     		-> is the readable code by the user.
     LanguageIDn 	-> the LanguagesIDn must be diferent from the default language.
     -- This two values are set by the system automaticaly, and are the same as the SysBaseElement_Tbl. For do that use the IdNum.
@@ -76,7 +76,7 @@ The key for each record:
     IDNum	--> is the autoincrement number auto generated.
 The unique Key is the union of:
     -- This three values are defined by the user.
-    BaseElementLanguageIDn	--> the IdNum of the element that has another languages meaning. It is created in the SysBaseElements_Tbl.
+    BaseElementIDn	--> the IdNum of the element that has another languages meaning. It is created in the SysBaseElements_Tbl.
     NameID     		-> is the readable code by the user.
     LanguageIDn 	-> the LanguagesIDn must be diferent from the default language.
     -- This two values are set by the system automaticaly, and are the same as the SysBaseElement_Tbl. For do that use the IdNum.
