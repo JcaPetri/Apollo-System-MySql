@@ -56,7 +56,7 @@ CREATE TABLE `SysBaseElementDocuments_Tbl` (
 	  UNIQUE KEY `IDNum_SbcUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
 	  KEY `ID_SbcIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
 	  KEY `IDNum_SbcIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-	  CONSTRAINT `BaseElementIDn_SbcRel` FOREIGN KEY (`BaseElementCommentIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `BaseElementIDn_SbcRel` FOREIGN KEY (`BaseElementIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
