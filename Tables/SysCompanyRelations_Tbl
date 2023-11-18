@@ -60,7 +60,7 @@ CREATE TABLE `SysCompanyRelations_Tbl` (
 	  KEY `ID_ScrIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID must always be indexed.',
     KEY `IDNum_ScrIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
     KEY `IDRelation_ScrIdx` (`ID` ASC, `RelationID` ASC) VISIBLE COMMENT 'To optimize the search of one Father and Son.',
-	  CONSTRAINT `CompanyIDn_ScrRel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`CompanyIDn`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `CompanyIDn_ScrRel` FOREIGN KEY (`CompanyIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
