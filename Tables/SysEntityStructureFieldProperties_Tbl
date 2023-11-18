@@ -101,7 +101,7 @@ CREATE TABLE `SysEntityStructureFieldProperties_Tbl` (
 	  `EntityStructureIDn` integer NOT NULL COMMENT 'The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.',
     `FieldValueTypeIDn` integer NOT NULL COMMENT 'The FieldValueTypeIDn is the IDNum of the value type (IDNum, Numeric, Text, etc). Its come from the SysBaseElements_Tbl). When the FieldValueType is IDNum, the number of the FieldValue is a references of the SysBaseElements_Tbl.',
     `FieldValue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The FieldValue is a numeric/text/etc value of the property, this value is not standar and can´t be multilanguage. If the value is an IDNumType, the meaning is in the SysEntityStructure_Tbl.',
-		`IDFieldStructureIDn` integer NOT NULL COMMENT 'The IDNameStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.',
+		`IDFieldStructureIDn` integer NOT NULL COMMENT 'The FieldStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.',
 		`StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
 	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
 	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
