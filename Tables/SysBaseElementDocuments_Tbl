@@ -1,5 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysBaseElementComments_Tbl table
+-- Create the SysBaseElementDocuments_Tbl table
 /*Contains one or more descriptions/comments/details/explains of each record of the diccionary.
 It has a defined language, an order when there is more than one description, a type of text format (mimetype), a status and the date of the last update.
 If the element has not been recorded in this table, it means the element has not clarifications.
@@ -23,26 +23,26 @@ Tips:
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Delete the table SysBaseElementComments_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+-- Delete the table SysBaseElementDocuments_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced SysBaseElementComments_Tbl Tables:
+-- The referenced SysBaseElementDocuments_Tbl Tables:
 -- ALTER TABLE `systemsdb`.`SysMicroservices_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
 
 -- After deleted the referenced, you can delete the table
-DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementComments_Tbl`;
+DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementDocuments_Tbl`;
 
-CREATE TABLE `SysBaseElementComments_Tbl` (
+CREATE TABLE `SysBaseElementDocuments_Tbl` (
 	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
 	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
-      `BaseElementCommentIDn` int NOT NULL COMMENT 'The BaseElementCommentIDn is the IDNum of the SysBaseElements_Tbl element, which have the comments.',
+    `BaseElementIDn` int NOT NULL COMMENT 'The BaseElementIDn is the IDNum of the SysBaseElements_Tbl element, which have the Documents.',
 	  `LanguageIDn` int NOT NULL COMMENT 'The LanguageIDn is the IdNum of the language in which the comment is defined.',
-      `CommentOrder` tinyint NOT NULL COMMENT 'The order of the comments.',
+    `CommentOrder` tinyint NOT NULL COMMENT 'The order of the Documents.',
 	  `TextFormatIDn` int NOT NULL COMMENT 'The TextFormatIDn is the IdNum of the format text in which the comment is defined.',
 	  `Comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Real comment written by the user.',
-      `ScopeIDn` int NOT NULL COMMENT 'The ScopeIDn is the IdNum of the Scope. It inherited from SysBaseElements_Tbl.',
+    `ScopeIDn` int NOT NULL COMMENT 'The ScopeIDn is the IdNum of the Scope. It inherited from SysBaseElements_Tbl.',
 	  `BusinessUnitIDn` int NOT NULL COMMENT 'The BusinessUnitIDn is the IdNum of the BusinessUnit. It inherited from SysBaseElements_Tbl.',
-      `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
+    `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
 	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
 	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
 	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner.',
@@ -51,16 +51,16 @@ CREATE TABLE `SysBaseElementComments_Tbl` (
  	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
 	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
 	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY `ID_SbcPriKey` (`IDNum`) COMMENT 'The sequence SysBaseElementComments_Tbl_seq generate the nextval',
+	  PRIMARY KEY `ID_SbcPriKey` (`IDNum`) COMMENT 'The sequence SysBaseElementDocuments_Tbl_seq generate the nextval',
 	  UNIQUE KEY `ID_SbcUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
 	  UNIQUE KEY `IDNum_SbcUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
 	  KEY `ID_SbcIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
 	  KEY `IDNum_SbcIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-	  CONSTRAINT `BaseElementCommentIDn_SbcRel` FOREIGN KEY (`BaseElementCommentIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+	  CONSTRAINT `BaseElementIDn_SbcRel` FOREIGN KEY (`BaseElementCommentIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
 	AUTO_INCREMENT=0 
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-	COMMENT='Contains one or more descriptions/comments/details/explains of each record of the diccionary.
+	COMMENT='Contains one or more descriptions/Documents/details/explains of each record of the diccionary.
 It has a defined language, an order when there is more than one description, a type of text format (mimetype), a status and the date of the last update.
 If the element has not been recorded in this table, it means the element has not clarifications.
 The key for each record:
@@ -81,35 +81,35 @@ Tips:
     The ScopeIDn + BusinessUnitIDn + TableIDn combination can be the Kafka/rabbitMq topic.';
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - SysBaseElementComments_Tbl
+-- Create the Trigger Before Insert - SysBaseElementDocuments_Tbl
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementCommentsBeforeInsert_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementDocumentsBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementCommentsBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElementComments_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementDocumentsBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElementDocuments_Tbl` FOR EACH ROW BEGIN
 	-- In the case, which the request do not give this value, MySql created it.
 	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
 	IF new.ID IS NULL OR new.ID = '' THEN
 		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
 	END IF;
-	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementCommentIDn LIMIT 1);
-	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementCommentIDn LIMIT 1);
+	SET new.ScopeIDn = (SELECT ScopeIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementIDn LIMIT 1);
+	SET new.BusinessUnitIDn = (SELECT BusinessUnitIDn FROM `systemsdb`.`SysBaseElements_Tbl` WHERE IDNum = new.BaseElementIDn LIMIT 1);
 	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
 END$$
 DELIMITER ;
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - SysBaseElementComments_Tbl
+-- Create the Trigger Before Update - SysBaseElementDocuments_Tbl
 -- en caso que desde Java no pasen la informacion de estos campos,
 -- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementCommentsBeforeUpdate_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementDocumentsBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementCommentsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElementComments_Tbl` FOR EACH ROW BEGIN
+CREATE TRIGGER `SysBaseElementDocumentsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElementDocuments_Tbl` FOR EACH ROW BEGIN
 	DECLARE v_TableHistory text;
 	DECLARE v_TableHistoryOld text;
 	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
@@ -124,14 +124,14 @@ CREATE TRIGGER `SysBaseElementCommentsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBas
 		SET v_TableHistory = '';
 		-- IDNum, this value never changes.
 		-- ID, this value never changes.
-		IF NEW.BaseElementCommentIDn <> OLD.BaseElementCommentIDn THEN SET v_TableHistory := OLD.BaseElementCommentIDn; ELSE SET v_TableHistory := '†'; END IF;
-        IF NEW.LanguageIDn <> OLD.LanguageIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LanguageIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.CommentOrder <> OLD.CommentOrder THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CommentOrder); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.TextFormatIDn <> OLD.TextFormatIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TextFormatIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.Comment <> OLD.Comment THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.Comment); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.ScopeIDn <> OLD.ScopeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.ScopeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.BusinessUnitIDn <> OLD.BusinessUnitIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.BusinessUnitIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-        IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.BaseElementIDn <> OLD.BaseElementIDn THEN SET v_TableHistory := OLD.BaseElementIDn; ELSE SET v_TableHistory := '†'; END IF;
+    IF NEW.LanguageIDn <> OLD.LanguageIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LanguageIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.CommentOrder <> OLD.CommentOrder THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CommentOrder); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.TextFormatIDn <> OLD.TextFormatIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TextFormatIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.Comment <> OLD.Comment THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.Comment); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.ScopeIDn <> OLD.ScopeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.ScopeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.BusinessUnitIDn <> OLD.BusinessUnitIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.BusinessUnitIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+    IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
@@ -149,4 +149,4 @@ END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`SysBaseElementComments_Tbl`;
+SELECT * FROM `systemsdb`.`SysBaseElementDocuments_Tbl`;
