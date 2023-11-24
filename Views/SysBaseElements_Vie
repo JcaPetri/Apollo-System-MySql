@@ -1,0 +1,47 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the ArtSysEntityStructures_Vie View
+/* Show the SysBaseElements_Vie table
+After the IDn of each field, the view show its meaning.
+*/
+-- #########################################################################################################################################################################################
+
+USE `systemsdb`;
+CREATE  OR REPLACE VIEW `SysBaseElements_Vie` AS
+SELECT `betbl`.`IDNum`,
+    `betbl`.`ID`,
+    `betbl`.`IDName`,
+    `betbl`.`FieldStructureIDn`,
+    `bem01`.`IDName` 'NameStructure',
+    `betbl`.`ScopeIDn`,
+    `bem02`.`IDName` 'Scope',
+    `betbl`.`BusinessUnitIDn`,
+    `bem03`.`IDName` 'BusinessUnit',
+    `betbl`.`LanguageIDn`,
+    `bem04`.`IDName` 'Language',    
+    `betbl`.`IDCode`,
+    `betbl`.`DefinitionIDn`,
+    `bem05`.`IDName` 'Definition',    
+    `betbl`.`InformationTypeIDn`,
+    `bem06`.`IDName` 'InformationType',    
+    `betbl`.`IDIsUsed`,
+    `betbl`.`StateIDn`,
+    `bem07`.`IDName` 'State',    
+    `betbl`.`CreatedByIDn`,
+    `betbl`.`LastModifiedByIDn`,
+    `betbl`.`OwnerIDn`,
+    `betbl`.`DateCreated`,
+    `betbl`.`DateTimeStamp`,
+    `betbl`.`TzNameIDn`,
+    `bem08`.`IDName` 'TzName',    
+    `betbl`.`TzOffset`,
+    `betbl`.`TableHistory`
+FROM `systemsdb`.`SysBaseElements_Tbl` `betbl`
+	JOIN `systemsdb`.`SysBaseElements_Tbl` `bem01` ON `betbl`.`FieldStructureIDn` = `bem01`.`IDNum`
+    LEFT JOIN `systemsdb`.`SysBaseElements_Tbl` `bem02` ON `betbl`.`ScopeIDn` = `bem02`.`IDNum`
+    LEFT JOIN `systemsdb`.`SysBaseElements_Tbl` `bem03` ON `betbl`.`BusinessUnitIDn` = `bem03`.`IDNum`
+    LEFT JOIN `systemsdb`.`SysBaseElements_Tbl` `bem04` ON `betbl`.`LanguageIDn` = `bem04`.`IDNum`
+    LEFT JOIN `systemsdb`.`SysBaseElements_Tbl` `bem05` ON `betbl`.`DefinitionIDn` = `bem05`.`IDNum`
+    LEFT JOIN `systemsdb`.`SysBaseElements_Tbl` `bem06` ON `betbl`.`InformationTypeIDn` = `bem06`.`IDNum`
+    LEFT JOIN `systemsdb`.`SysBaseElements_Tbl` `bem07` ON `betbl`.`StateIDn` = `bem07`.`IDNum`
+    LEFT JOIN `systemsdb`.`SysBaseElements_Tbl` `bem08` ON `betbl`.`TzNameIDn` = `bem08`.`IDNum`
+;;
