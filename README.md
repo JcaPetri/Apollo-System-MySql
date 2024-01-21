@@ -32,16 +32,23 @@ $`\textcolor{blue}{\text{TABLES}}`$
 > 
 > Microservice_Tbl has not their own ID and IDNum.
 
-
 ___
 ### Scope
+The Scope are the tables of the software. 
 
+All scope are created in the SysBaseElements_Tbl. If some others properties of a specific record is needed, we add this information in the SysBaseElementOthersFiels_Tbl table.
+So with this type of database structure, all the record has a common and specific properties.
+> [!TIP]
+> In the Article database we can create all the articles with theirs specific properties without create new columns. We avoid have a lot of record with null values.
+> 
+> In the Supplier database we can create all the client an each one has their own properties.
 
 >[!IMPORTANT]
-> Each Scope must have a table. --> When you create a Scope is a Table, which could be real or virtual, you need to create:
-> - EntityStructures_Tbl --> here you set up wich field it has.
-> - EntityFieldProperties_Tbl	--> here you set up the properties of each Field. (DataType, Lenght, etc)
-> - EntityFieldDefaultValues_Tbl	--> here you set up the default value, when the user do not send it. So the user fill only the changed values.
+ Each Scope must have defined a table structure in the software. 
+- When you create a Scope is a Table, which could be real or virtual, you need to create it in the sofware structure:
+    - EntityStructures_Tbl --> here you set up wich field it has.
+    - EntityFieldProperties_Tbl	--> here you set up the properties of each Field. (DataType, Lenght, etc)
+    - EntityFieldDefaultValues_Tbl	--> here you set up the default value, when the user do not send it. So the user fill only the changed values.
 
 ___
 ## The Apolo Software Structure are defined by:
@@ -70,34 +77,36 @@ This is the logic and where the permanent information are stored.
 Each Microservice specializes in a specific task. 
 ___
 ### Data Base Structure
-Structure are as follows:
-	Used to create the main elements
-		SysBaseElements_Tbl	--> Contains the diccionary of all system elements of the Microservice.
-  	SysBaseElementOthersFiels_Tbl	--> Contains the optional fields/columns of the data elements.
-		SysBaseElementLanguages_Tbl	--> Contains the meaning of the diccionary in other languages.
-		SysBaseElementComments_Tbl	--> Contains one or more comments/details/explains of each record of the diccionary.
-		SysBaseElementKafka_Tbl	--> Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
-	Used to create multiples tables
-		SysRootElements_Tli	--> This is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice and BusinessUnit.
-	Used to create the software structure
-		SysEntities_Tli	--> This is a List Table that contains the entities of the system, they can be database tables or java classes. 
-  							Enable the IDNum element to a Microservice and BusinessUnit.
-		SysEntityFields_Tli	--> This is a List Table that contains the fields or the columns of the entities. Enable the IDNum element to a Microservice and BusinessUnit.
-		SysEntityStructures_Tbl	--> Contains each structure of the database tables or java classes.
-		SysEntityStructureFieldProperties_Tbl	--> Contains the properties of each field or column. They can be DataType, Lenght, etc.
-		SysEntityStructureFieldDefaultValues_Tbl	--> Contains the default value of each field or column. When you set a value for a column, if the user does not enter, the system get from this table the value to enter.
-	Used to create the Microservices.
-		SysMicroservices_Tbl	--> Contains the microservices that use the software.
-    Used to create the Companies and their Structures
-		SysCompanies_Tbl	--> Contains the companies that use the software.
-		SysCompanyRelations_Tbl --> Contains the relations between companies. If you have a economic group in this table can build this structure.
-  		SysCompanyMicroservice_Tbl --> Contains the relation between Companies and Microservices.
+***Structure are as follows:***
+- ***Used to create the main elements***
+    - SysBaseElements_Tbl	--> Contains the diccionary of all system elements of the Microservice.
+    - SysBaseElementOthersFiels_Tbl	--> Contains the optional fields/columns of the data elements.
+    - SysBaseElementLanguages_Tbl	--> Contains the meaning of the diccionary in other languages.
+    - SysBaseElementComments_Tbl	--> Contains one or more comments/details/explains of each record of the diccionary.
+    - SysBaseElementKafka_Tbl	--> Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
 
+- ***Used to create multiples tables***
+    - SysRootElements_Tli	--> This is a List Table that contains the other element of the system. Enable the IDNum element to a Microservice and BusinessUnit.
+	
+ - ***Used to create the software structure***
+    - SysEntities_Tli	--> This is a List Table that contains the entities of the system, they can be database tables or java classes. Enable the IDNum element to a Microservice and BusinessUnit.
+    - SysEntityFields_Tli	--> This is a List Table that contains the fields or the columns of the entities. Enable the IDNum element to a Microservice and BusinessUnit.
+    - SysEntityStructures_Tbl	--> Contains each structure of the database tables or java classes.
+    - SysEntityStructureFieldProperties_Tbl	--> Contains the properties of each field or column. They can be DataType, Lenght, etc.
+    - SysEntityStructureFieldDefaultValues_Tbl	--> Contains the default value of each field or column. When you set a value for a column, if the user does not enter, the system get from this table the value to enter.
 
-========================================================================================================================================================================================
-Detailed explanation of each table.
-	---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	Used to create the main elements
+- ***Used to create the Microservices.***
+    - SysMicroservices_Tbl	--> Contains the microservices that use the software.
+      
+- ***Used to create the Companies and their Structures***
+    - SysCompanies_Tbl	--> Contains the companies that use the software.
+    - SysCompanyRelations_Tbl --> Contains the relations between companies. If you have a economic group in this table can build this structure.
+    - SysCompanyMicroservice_Tbl --> Contains the relation between Companies and Microservices.
+
+---
+## Detailed explanation of each table.
+~~~
+ Used to create the main elements
 		SysBaseElements_Tbl
 			Contains the diccionary of all system elements of the Microservice.
 			The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
