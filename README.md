@@ -20,8 +20,8 @@ $`\textcolor{blue}{\text{TABLES}}`$
 - **Tbl** is the normal table, where stores the specific software data. This kind of table have relation with others tables of the same kind.
 
 > All tables have the key for each record:
->- **ID**		--> is the uniqueidentifier auto generated.
->- **IDNum** 	--> is the autoincrement number auto generated.
+>- **ID** --> is the uniqueidentifier auto generated.
+>- **IDNum** --> is the autoincrement number auto generated.
 
 - **Tli** is the list table, in which only enable the IDNum for one Microservice and BusinessUnit. This kind of table do not have any relation with others.
 
@@ -31,6 +31,7 @@ $`\textcolor{blue}{\text{TABLES}}`$
 > Tables without owns ID and IDNum, It is generated in SysBaseElements_Tbl.
 > 
 > Microservice_Tbl has not their own ID and IDNum.
+
 
 ___
 ### Scope
@@ -42,6 +43,31 @@ ___
 > - EntityFieldProperties_Tbl	--> here you set up the properties of each Field. (DataType, Lenght, etc)
 > - EntityFieldDefaultValues_Tbl	--> here you set up the default value, when the user do not send it. So the user fill only the changed values.
 
+___
+## The Apolo Software Structure are defined by:
+***Frontend***
+This is the user interface, which call the backend to get the information and business logic.
+Example to create an invoice, you need the information of:
+> Clients -> call the PersonsMicroservices, which has all the information about the clients/supplier/both.
+- The parameters request are: 
+    - Endpoint: this is the  address of the Microservice.
+    - Group: this can be Clients types, BusinessUnits, etc. This can be an array of Groups.
+    - Others parameters defined by the microservice, needed to comply the request.
+> Articles -> call the ArticlesMicroservices, which has all information about the articles (things and services) and theirs relations.
+- The parameters request are: 
+    - Endpoint: this is the  address of the Microservice.
+    - Group: this can be articles types, BusinessUnits, etc. This can be an array of Groups.
+    - Others parameters defined by the microservice, needed to comply the request.
+> Taxes -> call the TaxesMicrosevices, which has all infomation about the taxes subject.
+- The parameters request are: 
+    - Endpoint: this is the  address of the Microservice.
+    - GeneratorID: the seller ID.
+    - DestiantionID: the client ID.
+    - Others parameters defined by the microservice, needed to comply the request.
+
+***Backend***
+This is the logic and where the permanent information are stored.
+Each Microservice specializes in a specific task. 
 ___
 ### Data Base Structure
 Structure are as follows:
