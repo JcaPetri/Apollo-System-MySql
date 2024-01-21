@@ -6,29 +6,44 @@ Group: com.apolo
 Name: system / articles / persons / users
 
 ## System Microservice
-Definitions:
-	Contains the system structure of all the software. In this module you need to create all the databases and java classes, enums, interfaces, entities, etc.
-	The main tables of this module will be in the other databases such as mirrors. These mirror tables will be updated via Kafka topics.
-	With this mechanism each microservice becames independent of the others. Example: MirSysCompanies, MirSysBusinessUnits, etc.
-	One important thing, is you make a mirror only of the records that need in the other microservice, not all the records that exists in the System Microservice.
-	The are two types of tables.
-		Tli is the list table, in which only enable the IDNum for one Microservice and BusinessUnit. This kind of table do not have any relation with others.
-		Tbl is the normal table, where stores the specific software data. This kind of table have relation with others tables of the same kind.
-  				Tables with their owns ID and IDNum. These are the common tables.
-	  			Tables without owns ID and IDNum, It is generated in SysBaseElements_Tbl.
-	  				Microservice_Tbl has not their own ID and IDNum.
-	All tables have the key for each record:
-		ID		--> is the uniqueidentifier auto generated.
-		IDNum	--> is the autoincrement number auto generated.
+**Definitions:**
+Contains the system structure of all the software. In this module you need to create all the databases and java classes, enums, interfaces, entities, etc.
+
+The main tables of this module will be in the other databases such as mirrors, but only the data that their need. These mirror tables will be updated via Kafka topics.
+> [!IMPORTANT]
+> With this mechanism each microservice becames independent of the others. Example: MirSysCompanies, MirSysBusinessUnits, etc.
+One important thing, is you make a mirror only of the records that need in the other microservice, not all the records that exists in the System Microservice.
+
+$`\textcolor{blue}{\text{TABLES}}`$ 
+
+**The are two types of tables.**
+- **Tbl** is the normal table, where stores the specific software data. This kind of table have relation with others tables of the same kind.
+
+> All tables have the key for each record:
+>- **ID**		--> is the uniqueidentifier auto generated.
+>- **IDNum** 	--> is the autoincrement number auto generated.
+
+- **Tli** is the list table, in which only enable the IDNum for one Microservice and BusinessUnit. This kind of table do not have any relation with others.
+
+> [!NOTE]
+> Tables with their owns ID and IDNum. These are the common tables.
+> 
+> Tables without owns ID and IDNum, It is generated in SysBaseElements_Tbl.
+> 
+> Microservice_Tbl has not their own ID and IDNum.
+
+___
+### Scope
+
 
 >[!IMPORTANT]
 > Each Scope must have a table. --> When you create a Scope is a Table, which could be real or virtual, you need to create:
 > - EntityStructures_Tbl --> here you set up wich field it has.
 > - EntityFieldProperties_Tbl	--> here you set up the properties of each Field. (DataType, Lenght, etc)
 > - EntityFieldDefaultValues_Tbl	--> here you set up the default value, when the user do not send it. So the user fill only the changed values.
- 
 
-
+___
+### Data Base Structure
 Structure are as follows:
 	Used to create the main elements
 		SysBaseElements_Tbl	--> Contains the diccionary of all system elements of the Microservice.
@@ -70,7 +85,7 @@ Detailed explanation of each table.
 			  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
 			  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
 			  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-			Important: when you create the element/object in this tabel, this element does not exits for the software. This table is like a dictionary.
+			Important: when you create the element/object in this table, this element does not exits for the software. This table is like a dictionary.
 						Only exist when you create the code in the specific table.
 				Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
 			Modification Rules:
@@ -174,7 +189,8 @@ Detailed explanation of each table.
 			Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
 	 		With this table the software manages what elements will be in each microservice.
 			In the SysBaseElemnets_Tbl is created the KaftaTopic Scope and inside this scope you create the topics.
-	 		In this table is assigned the BaseElement to a specific Topic. You can assign one elemento to more than one Topic.
+	 		In this table is assigned the BaseElement to a specific Topic. 
+    			***You can assign one element to more than one Topic.***
 			After you create or update and element, the system get the data of this table to know wich queues must be updated.
 	 		If BaseElement is a Scope, all elements it contains must be updated.
 	 		The key for each record:
@@ -193,7 +209,6 @@ Detailed explanation of each table.
 					DateCreated			--> The DateCreated is the record creation datetime UTC.
 					DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
 					TableHistory		-->	The TableHistory contain then change history of each column.			
-
 
  
  
