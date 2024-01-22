@@ -1,11 +1,12 @@
-Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysBaseElementKafka_Tbl table
+/*Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
 With this table the software manages what elements will be in each microservice.
 In the SysBaseElemnets_Tbl is created the KaftaTopic Scope and inside this scope you create the topics.
 In this table is assigned the BaseElement to a specific Topic. 
   ***You can assign one element to more than one Topic.***
 After you create or update and element, the system get the data of this table to know wich queues must be updated.
 If BaseElement is a Scope, all elements it contains must be updated.
-
 The key for each record:
   ID --> is the uniqueidentifier auto generated.
   IDNum --> is the autoincrement number auto generated.
@@ -21,6 +22,129 @@ Common Field/Columns for all tables
     OwnerIDn --> The OwnerIDn is the IDNum of the record owner.
     DateCreated --> The DateCreated is the record creation datetime UTC.
     DateTimeStamp --> The DateTimeStamp is the datetime UTC of the last modification.
-    TableHistory -->	The TableHistory contain then change history of each column.			
+    TableHistory -->	The TableHistory contain then change history of each column.*/
 
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Delete the table SysBaseElementKafka_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced SysBaseElementLanguages_Tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysMicroservices_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
+
+-- After deleted the referenced, you can delete the table
+DROP TABLE IF EXISTS `systemsdb`.`SysBaseElementKafka_Tbl`;
+
+CREATE TABLE `systemsdb`.`SysBaseElementKafka_Tbl` (
+	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
+	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
+	  `BaseElementIDn` int NOT NULL COMMENT 'The BaseElementIDn is the IDNum of the IDName from the SysBaseElement, which has the IDName in other languages than default.',
+	  `KafkaTopicIDn` int NOT NULL COMMENT 'The KafkaTopicIDn is the IDNum of the Kafka Tipocs Table.',
+	  `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
+	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
+	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
+	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner.',
+	  `DateCreated` datetime NOT NULL COMMENT 'The DateCreated is the record creation date with UTC.',
+	  `DateTimeStamp` timestamp NOT NULL COMMENT 'The DateTimeStamp is the date of the last modification of the record with UTC.',
+ 	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
+	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
+	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
+	  PRIMARY KEY `ID_SbeKPriKey` (`IDNum`) COMMENT 'The sequence SysBaseElementKafka_Tbl_seq generate the nextval',
+	  UNIQUE KEY `ID_SbeKUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
+	  UNIQUE KEY `IDNum_SbeKUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
+	  UNIQUE KEY `IDBaseElementKafka_SbeKUnique` (`BaseElementIDn`,`KafkaTopicIDn`) COMMENT 'A BaseElement IDNum must be unique for KafkaTopicIDn.',
+	  KEY `ID_SbeKIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
+	  KEY `IDNum_SbeKIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
+	  CONSTRAINT `BaseElementIDn_SbeKRel` FOREIGN KEY (`BaseElementIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT `KafkaTopicIDn_SbeKRel` FOREIGN KEY (`KafkaTopicIDn`) REFERENCES `systemsdb`.`SysBaseElements_Tbl` (`IDNum`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB 
+	AUTO_INCREMENT=0 
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+	COMMENT='Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
+With this table the software manages what elements will be in each microservice.
+In the SysBaseElemnets_Tbl is created the KaftaTopic Scope and inside this scope you create the topics.
+In this table is assigned the BaseElement to a specific Topic. 
+  ***You can assign one element to more than one Topic.***
+After you create or update and element, the system get the data of this table to know wich queues must be updated.
+If BaseElement is a Scope, all elements it contains must be updated.
+The key for each record:
+  ID --> is the uniqueidentifier auto generated.
+  IDNum --> is the autoincrement number auto generated.
+The unique Key is the union of:
+  BaseElementIDn -> the BaseElementIDn is the element, this could be an element or scope. Linked with SysBaseElements_Tbl.
+  KafkaTopicIDn -> the KafkaTopicIDn is the IDNum of queue Topic. Linked with SysBaseElements_Tbl.
+    Unique = One KafkaTopicIDn must be unique for each BaseElement.
+Common Field/Columns for all tables
+  The objective of these are to store critical information for the system and the record history.
+    StatedIDn --> The StatedIDn is the IDNum that define if the record is enable or not.
+    CreatedByIDn --> The CreatedByIDn is the IDNum of the user who created the record.
+    LastModifiedByIDn --> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+    OwnerIDn --> The OwnerIDn is the IDNum of the record owner.
+    DateCreated --> The DateCreated is the record creation datetime UTC.
+    DateTimeStamp --> The DateTimeStamp is the datetime UTC of the last modification.
+    TableHistory -->	The TableHistory contain then change history of each column.';
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Insert - SysBaseElementKafka_Tbl
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementKafkaInsert_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysBaseElementKafkaBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElementKafka_Tbl` FOR EACH ROW BEGIN
+	-- In the case, which the request do not give this value, MySql created it.
+	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
+	IF new.ID IS NULL OR new.ID = '' THEN
+		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
+	END IF;
+	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+END$$
+DELIMITER ;
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Update - SysBaseElementKafka_Tbl
+-- en caso que desde Java no pasen la informacion de estos campos,
+-- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementKafkaBeforeUpdate_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `SysBaseElementKafkaBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElementKafka_Tbl` FOR EACH ROW BEGIN
+	DECLARE v_TableHistory text;
+	DECLARE v_TableHistoryOld text;
+	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+    IF new.TableHistory = 'SetNull' THEN
+		SET new.TableHistory = null;
+    ELSEIF new.TableHistory = 'SetOff' THEN
+		SET new.TableHistory = old.TableHistory;
+    ELSE
+		-- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
+		-- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
+		SET v_TableHistoryOld := old.TableHistory;
+		SET v_TableHistory = '';
+		-- IDNum, this value never changes.
+		-- ID, this value never changes.
+		IF NEW.BaseElementIDn <> OLD.BaseElementIDn THEN SET v_TableHistory := OLD.BaseElementIDn; ELSE SET v_TableHistory := '†'; END IF;
+  IF NEW.KafkaTopicIDn <> OLD.KafkaTopicIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.KafkaTopicIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+  IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',NEW.DateCreated); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.DateTimeStamp <> OLD.DateTimeStamp THEN SET v_TableHistory := concat(v_TableHistory,'†',OLD.DateTimeStamp); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzNameIDn <> OLD.TzNameIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzNameIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW.TzOffset <> OLD.TzOffset THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzOffset); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			SET NEW.TableHistory := v_TableHistory;
+		ELSE
+			SET NEW.TableHistory := concat(v_TableHistory,'‡',v_TableHistory);
+		END IF;
+	END IF;
+END$$
+DELIMITER ;
+
+-- Lista los datos de la tabla
+SELECT * FROM `systemsdb`.`SysBaseElementKafka_Tbl`;
 
