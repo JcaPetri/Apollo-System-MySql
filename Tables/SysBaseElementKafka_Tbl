@@ -1,0 +1,26 @@
+Contains the relation between the BaseElements and the Kafka Topics, to make updated all the microservices.
+With this table the software manages what elements will be in each microservice.
+In the SysBaseElemnets_Tbl is created the KaftaTopic Scope and inside this scope you create the topics.
+In this table is assigned the BaseElement to a specific Topic. 
+  ***You can assign one element to more than one Topic.***
+After you create or update and element, the system get the data of this table to know wich queues must be updated.
+If BaseElement is a Scope, all elements it contains must be updated.
+
+The key for each record:
+  ID --> is the uniqueidentifier auto generated.
+  IDNum --> is the autoincrement number auto generated.
+The unique Key is the union of:
+  BaseElementIDn -> the BaseElementIDn is the element, this could be an element or scope. Linked with SysBaseElements_Tbl.
+  KafkaTopicIDn -> the KafkaTopicIDn is the IDNum of queue Topic. Linked with SysBaseElements_Tbl.
+    Unique = One KafkaTopicIDn must be unique for each BaseElement.
+Common Field/Columns for all tables
+  The objective of these are to store critical information for the system and the record history.
+    StatedIDn --> The StatedIDn is the IDNum that define if the record is enable or not.
+    CreatedByIDn --> The CreatedByIDn is the IDNum of the user who created the record.
+    LastModifiedByIDn --> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+    OwnerIDn --> The OwnerIDn is the IDNum of the record owner.
+    DateCreated --> The DateCreated is the record creation datetime UTC.
+    DateTimeStamp --> The DateTimeStamp is the datetime UTC of the last modification.
+    TableHistory -->	The TableHistory contain then change history of each column.			
+
+
