@@ -1,55 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the sysbaseelementlanguage_tbl table
-/*Contains the meaning of the elements (of all tables in the System Microservice) in another language than the default.
-Concept: The only data that accept another language is the fieldvaluetype_idn 1511 - fieldvaluetext, (because the number and the system idnum are numbers).
-             In this table you have to comply with the same rules as the sysbaseelement_tbl.
-             Each record is like a cell in a excel grid, so we can define the language of each cell.
-Clarification: the values baseelement_idn, father_idn, scope_idn, group_idn = are always equal to the sysdataelement_tbl. 
-                 These columns are put in this table only to ensure integrity and that there are no duplicates.
-The key for each record:
-    baseelementlanguage_id --> is the uniqueidentifier auto generated.
-    baseelementlanguage_idnum --> is the autoincrement number auto generated.
-        Clarification: idn = idnum (all the field ended with _idn, the origen of the value is the column idnum of the table sysbaseelement_tbl).
-                         Most fields in tables have an idnum as a value. To determine what a code means, you should consult this table.
-                         If you select another language_idn, the system change all theirs values.
-The unique Key is the union of:
-    To respect all the rules the unique value must be the combination of: FieldValue/Father/Scope/Group/Language.
-    -- This three values are defined by the user.
-        baseelement_idn --> the idnum of the element that has another languages meaning. It is created in the sysbaseelement_tbl.
-        fieldvalue -> is the readable code by the user, in another language than default.
-        language_idn -> the fieldvalue must be different than the language.
-    Example:
-        TblOrigin => baseelement_idn 1331 - fieldvaluetype_idn 1511 - fieldvalue Articles_Tbl - language_idn English
-        ThisTable => baseelement_idn 1331 - fieldvaluetype_idn 1511 - fieldvalue Produtis_Tbl - language_idn Italian
-    -- This three values are set by the system automaticaly, and are the same as the sysbaseelement_Tbl. For do that use the baseelement_idn.
-        fieldvaluetype_idn - the fieldvaluetype_idn is allway 1511-fieldvaluetext, (because the number and the system idnum are numbers).
-        father_idn -> the father_idn define each row of the table.
-        scope_idn -> the scope_idn define the table that contain all the row.
-        group_idn -> the group_idn is the section, company, businessunit owner of the tables.
-Modification Rules Only when the definition_idn is software:
-    You can change the idname if there is a spelling error. Example you have a spelling error in an invoce and must be invoice.
-    Warning: If I change the code that represents the word invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
-        If you want to change the code and it is in many places, the system must generate another code for the new value.
-        To change this value, it must be done by the administrator. 
-        IT IS BEST TO NEVER CHANGE IT.
-    Clarification: this rules applied to the system data, the only rules to change the common data is respect the unique key.
-Kafka/RabbitMQ:
-    If one element of this table must be in other microservices, the idnum must be added to accdataelementkafka_tbl and assigned to the specific topic.
-    The key is systable_idn, element_idn (baseelementlanguage_idnum), kafkatopic_idn.
-Common Field/Columns for all tables
-  The objective of these is to store critical information for the system and the record history.
-    stated_idn --> The stated_idn define if the record is enabled or not, or the custom state defined. Linked to the system database through sysbaseelementlanguage_mir.
-    createdby_idn --> The createdby_idn is the userauthorization_idn of the user who created the record. Linked to the userdb database through userauthorization_tbl.
-    lastmodifiedby_idn --> The lastmodifiedby_idn is the userauthorization_idn of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.
-    ownedby_idn --> The ownedby_idn is the userauthorization_idn of the record owner. Linked to the userdb database through userauthorization_tbl.
-    date_created --> The date_created is the record creation datetime UTC.
-    date_timestamp --> The date_timestamp is the datetime UTC of the last modification.
-    tzname_idn --> The sysbaseelementlanguage_idnum of the Time Zone. Linked to the system database through sysbaseelementlanguage_mir.
-    tzoffset --> The number of the difference between Zero Time Zone and the Time Zone where the record is created or updated.
-    table_history --> The table_history contain then change history of each column. The value is set only if it has changed from the previous value.
-*/
-
--- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Delete the table sysbaseelementlanguage_tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
@@ -118,6 +68,20 @@ The unique Key is the union of:
         father_idn -> the father_idn define each row of the table.
         scope_idn -> the scope_idn define the table that contain all the row.
         group_idn -> the group_idn is the section, company, businessunit owner of the tables.';
+
+/*
+Common Field/Columns for all tables
+  The objective of these is to store critical information for the system and the record history.
+    stated_idn --> The stated_idn define if the record is enabled or not, or the custom state defined. Linked to the system database through sysbaseelementlanguage_mir.
+    createdby_idn --> The createdby_idn is the userauthorization_idn of the user who created the record. Linked to the userdb database through userauthorization_tbl.
+    lastmodifiedby_idn --> The lastmodifiedby_idn is the userauthorization_idn of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.
+    ownedby_idn --> The ownedby_idn is the userauthorization_idn of the record owner. Linked to the userdb database through userauthorization_tbl.
+    date_created --> The date_created is the record creation datetime UTC.
+    date_timestamp --> The date_timestamp is the datetime UTC of the last modification.
+    tzname_idn --> The sysbaseelementlanguage_idnum of the Time Zone. Linked to the system database through sysbaseelementlanguage_mir.
+    tzoffset --> The number of the difference between Zero Time Zone and the Time Zone where the record is created or updated.
+    table_history --> The table_history contain then change history of each column. The value is set only if it has changed from the previous value.
+*/
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the Trigger Before Insert - sysbaseelementlanguage_tbl
