@@ -1,47 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysBaseElements_Tbl table
-/* Contains the diccionary of all system elements of the Microservice.
-The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
-In order for the same f word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
-To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
-The key for each record:
-	ID		--> is the uniqueidentifier auto generated.
-	IDNum	--> is the autoincrement number auto generated.
-The unique Key is the union of:
-  IDName     		-> is the readable code by the user.
-  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
-  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
-  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-Important: when you create the element/object in this tabel, this element does not exits for the software. This table is like a dictionary.
-			Only exist when you create the code in the specific table.
-	Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
-Modification Rules:
-	You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
-	Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
-	If you want to change the code and it is in many places, the system must generate another code for the new value
-	To change this value, it must be done by the administrator. 
-	It is best to never change it.
-Common Field/Columns for all tables
-	The objective of these are to store critical information for the system and the record history.
-		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
-		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
-		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
-		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
-		DateCreated			--> The DateCreated is the record creation datetime UTC.
-		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
-		TableHistory		-->	The TableHistory contain then change history of each column.
-Comments:
-	In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
-	Example:
-		In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, java entities, classes, etc.
-		In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system.
-		In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
-		In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
-Tips:
-	The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.
-*/
-
--- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Delete the table SysBaseElements_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
@@ -116,15 +74,6 @@ Modification Rules:
 	If you want to change the code and it is in many places, the system must generate another code for the new value
 	To change this value, it must be done by the administrator. 
 	It is best to never change it.
-Common Field/Columns for all tables
-	The objective of these are to store critical information for the system and the record history.
-		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
-		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
-		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
-		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
-		DateCreated			--> The DateCreated is the record creation datetime UTC.
-		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
-		TableHistory		-->	The TableHistory contain then change history of each column.
 Comments:
 	In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
 	Example:
@@ -134,6 +83,19 @@ Comments:
 		In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
 Tips:
 	The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.';
+
+/* 
+Common Field/Columns for all tables
+	The objective of these are to store critical information for the system and the record history.
+		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
+		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
+		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
+		DateCreated			--> The DateCreated is the record creation datetime UTC.
+		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
+		TableHistory		-->	The TableHistory contain then change history of each column.
+*/
+
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the Trigger Before Insert - SysBaseElements_Tbl
