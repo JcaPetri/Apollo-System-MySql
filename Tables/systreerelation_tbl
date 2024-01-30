@@ -1,0 +1,163 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the systreerelation_tbl table
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First Delete the table systreerelation_tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+USE systemsdb;
+-- First you must to delete the Foreing Key Constraint;
+-- The referenced SysBaseElements_tbl Tables:
+-- ALTER TABLE `systemsdb`.`SysBaseElements_tbllanguage`  DROP FOREIGN KEY `BaseElementLanguageIDnBel`;
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the systreerelation_tbl table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.systreerelation_tbl
+DROP TABLE IF EXISTS `systemsdb`.`systreerelation_tbl`;
+
+CREATE TABLE `systreerelation_tbl` (
+    `treerelation_idnum` int NOT NULL AUTO_INCREMENT COMMENT 'The treerelation_idnum is the autoincrement number', 
+    `treerelation_id` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The treerelation_id is the uniqueidentifier auto generated V4', 
+    `relation_idn` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The relation_idn is the father of the relation. The value must be one of the treerelation_idnum column.',
+    `relationlevel` smallint NOT NULL COMMENT 'The level of the relation is a number that start with 1. The system set automatically but the user can set it too.',
+    `relationorden` smallint NOT NULL COMMENT 'The orden inside the level, all level start with the number 1. The system set automatically but the user can set it too.',
+    `baseelement_idn` int NOT NULL COMMENT 'The baseelement_idn is the Owner of the relation. Link with the SysBaseElements_tbl.',
+    `state_idn` smallint NOT NULL COMMENT 'The stated_idn define if the record is enable or not, or the custom state difined.',
+    `createdby_idn` int NOT NULL COMMENT 'The createdby_idn is the user_idnum of the user who created the record. Linked to the userdb database through userauthorization_tbl.',
+    `lastmodifiedby_idn` int NOT NULL COMMENT 'The lastmodifiedby_idn is the user_idnum of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.',
+    `ownedby_idn` int NOT NULL COMMENT 'The ownedby_idn is the user_idnum of the record owner. Linked to the userdb database through userauthorization_tbl.',
+    `date_created` datetime(6) NOT NULL COMMENT 'The date_created is the record creation datetime UTC.',
+    `date_timestamp` datetime(6) NOT NULL COMMENT 'The date_timestamp is the datetime UTC of the last modification.',
+    `tzname_idn` smallint NOT NULL COMMENT 'The systreerelation_idnum of the TimeZone.',
+    `tzoffset` smallint NOT NULL COMMENT 'The number of the diference between ZeroTimeZone and the TimeZone where the record is created or updated.',
+    `table_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The table_history contain then change history of each column. The value is set only if it has changed from the previous value.',
+    PRIMARY KEY `treerelationidnum_strkey` (`treerelation_idnum`) COMMENT 'The sequence is an autoincremental value.',
+    UNIQUE KEY `treerelationidnum_struni` (`treerelation_idnum`) COMMENT 'The treerelation_idnum must be unique.',
+    KEY `treerelationidnum_stridx` (`treerelation_idnum`) /*!80000 INVISIBLE */ COMMENT 'The treerelation_idnum must always be indexed.',
+    UNIQUE KEY `treerelationid_struni` (`treerelation_id`) /*!80000 INVISIBLE */ COMMENT 'The uniqueidentifier.',
+    KEY `treerelationid_stridx` (`treerelation_id`) /*!80000 INVISIBLE */ COMMENT 'The treerelation_id must always be indexed.',
+    KEY `baseelementrelation_stridx` (`relation_idn` ASC, `baseelement_idn` ASC) VISIBLE COMMENT 'To optimize the search of one Father and Son.',
+    CONSTRAINT `baseelementidn_ScrRel` FOREIGN KEY (`baseelement_idn`) REFERENCES `systemsdb`.`sysbaseelement_tbl` (`baseelement_idnum`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB 
+    AUTO_INCREMENT=0 
+    DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+    COMMENT='Contains the relations between elements. This elements could be a company, bussinessunit, html element, etc.
+In this table is applied the father/son schema.
+If you have a economic group in this table can build its structure.
+    IMPORTANT: This type of structure allow you to get a individual or group report.
+The key for each record:
+    treerelation_id --> is the uniqueidentifier auto generated.
+    treerelation_idnum --> is the autoincrement number auto generated.
+        Clarification: idn = idnum (all the field ended with _idn, the origen of the value is the column idnum of the table sysbaseelement_tbl).
+The unique Key is the union of:
+    To respect all the rules the unique value must be the combination of: baseelement/documenttype/language.
+        relation_idn --> The relation_idn is the father of the relation. The value must be one of the treerelation_idnum column.
+        relationlevel --> The level of the relation, all start with the number 1. The system set automatically but the user can set it too.
+        relationorden --> The orden inside the level, all level start with the number 1. The system set automatically but the user can set it too.
+        baseelement_idn --> The baseelement_idn is the Owner of the relation. Link with the SysBaseElements_tbl.
+';
+
+/*
+Common Field/Columns for all tables
+  The objective of these is to store critical information for the system and the record history.
+    stated_idn --> The stated_idn define if the record is enabled or not, or the custom state defined. Linked to the system database through systreerelation_mir.
+    createdby_idn --> The createdby_idn is the userauthorization_idn of the user who created the record. Linked to the userdb database through userauthorization_tbl.
+    lastmodifiedby_idn --> The lastmodifiedby_idn is the userauthorization_idn of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.
+    ownedby_idn --> The ownedby_idn is the userauthorization_idn of the record owner. Linked to the userdb database through userauthorization_tbl.
+    date_created --> The date_created is the record creation datetime UTC.
+    date_timestamp --> The date_timestamp is the datetime UTC of the last modification.
+    tzname_idn --> The systreerelation_idnum of the Time Zone. Linked to the system database through systreerelation_mir.
+    tzoffset --> The number of the difference between Zero Time Zone and the Time Zone where the record is created or updated.
+    table_history --> The table_history contain then change history of each column. The value is set only if it has changed from the previous value.
+*/
+
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Insert - systreerelation_tbl
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`systreerelationBeforeInsert_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `systreerelationBeforeInsert_Trg` BEFORE INSERT ON `systreerelation_tbl` FOR EACH ROW BEGIN
+    -- In the case, which the request do not give this value, MySql created it.
+    -- Set the treerelation_id uniqueidentifier, DateCreated and DateTimeStamp
+    IF new.treerelation_id IS NULL OR new.treerelation_id = '' THEN
+        SET new.treerelation_id = uuid(); -- Define the UniqueIdentifier Value
+    END IF;
+    IF new.relationlevel IS NULL OR new.relationlevel = 0 OR new.relationlevel = '' THEN
+        -- If the user do not send a value
+        SET new.relationlevel = (SELECT ifnull(MAX(relationlevel),0) + 1 FROM `systemsdb`.`systreerelation_tbl` WHERE treerelation_idnum = new.relation_idn);
+            -- Busca el treerelation_idnum = new.relation_id 
+                -- si es nulo, pone 1, 
+                -- si tiene valor, le suma 1 al relationlevel
+    END IF;
+    IF new.relationorden IS NULL OR new.relationorden = 0 OR new.relationorden = '' THEN
+        -- If the user do not send a value
+        SET new.relationorden = (SELECT ifnull(MAX(relationorden),0) + 1 FROM `systemsdb`.`systreerelation_tbl` WHERE relation_idn = new.relation_idn AND relationlevel = new.relationlevel);
+            -- Busca el relation_idn = new.relation_idn AND relationlevel = new.relationlevel
+                -- si es nulo, pone 1, 
+                -- si tiene valor, le suma 1 al relationorder
+    END IF;
+    SET new.date_created = ifnull(new.date_created,CURRENT_TIMESTAMP);
+    SET new.date_timestamp = ifnull(new.date_timestamp,CURRENT_TIMESTAMP);
+END$$
+DELIMITER ;
+
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the Trigger Before Update - systreerelation_tbl
+-- en caso que desde Java no pasen la informacion de estos campos,
+-- establece el valor del date_timestamp, table_history creando el historico de cada registro
+USE systemsdb;
+DROP TRIGGER IF EXISTS `systemsdb`.`systreerelationBeforeUpdate_Trg`;
+DELIMITER $$
+USE `systemsdb`$$
+-- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
+CREATE TRIGGER `systreerelationBeforeUpdate_Trg` BEFORE UPDATE ON `systreerelation_tbl` FOR EACH ROW BEGIN
+    DECLARE v_tablehistory text;
+    DECLARE v_tablehistoryold text;
+    SET new.date_timestamp = ifnull(new.date_timestamp,CURRENT_TIMESTAMP);
+    IF new.table_history = 'SetNull' THEN
+        SET new.table_history = null;
+    ELSEIF new.table_history = 'SetOff' THEN
+        SET new.table_history = old.table_history;
+    ELSE
+        -- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
+        -- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
+        SET v_tablehistoryold := old.table_history;
+        SET v_tablehistory = '';
+        -- treerelation_idnum, this value never changes.
+        -- treerelation_id, this value never changes.
+        IF NEW.relation_idn <> OLD.relation_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.relation_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.relationlevel <> OLD.relationlevel THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.relationlevel); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.relationorden <> OLD.relationorden THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.relationorden); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.baseelement_idn <> OLD.baseelement_idn THEN SET v_tablehistory := OLD.baseelement_idn; ELSE SET v_tablehistory := '†'; END IF;
+        IF NEW.state_idn <> OLD.state_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.state_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.createdby_idn <> OLD.createdby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.createdby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.lastmodifiedby_idn <> OLD.lastmodifiedby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.lastmodifiedby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.ownedby_idn <> OLD.ownedby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.ownedby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF v_tablehistoryold IS NULL THEN
+            SET v_tablehistory := CONCAT(v_tablehistory,'†',NEW.date_created); 
+            -- This only add the date_created if is the first time that are going to set up the history value.
+        ELSE 
+            SET v_tablehistory := CONCAT(v_tablehistory,'†'); 
+            -- Do not add a date_created, the record only have the first one.
+        END IF;
+        IF NEW.date_timestamp <> OLD.date_timestamp THEN SET v_tablehistory := concat(v_tablehistory,'†',OLD.date_timestamp); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.tzname_idn <> OLD.tzname_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.tzname_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.tzoffset <> OLD.tzoffset THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.tzoffset); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF v_tablehistoryold IS NULL THEN
+            SET NEW.table_history := v_tablehistory;
+            -- This line ensures add the first history value.
+        ELSE
+            SET NEW.table_history := concat(v_tablehistory,'‡',v_tablehistory);
+            -- This line concat the new and old history value.
+        END IF;
+    END IF;
+END$$
+DELIMITER ;
+
+-- Lista los datos de la tabla
+SELECT * FROM `systemsdb`.`systreerelation_tbl`;
+
+
+
