@@ -1,36 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the sysbaseelementkafka_tbl table
-/*
-Contains the relation between the sysbaseelement_tbl and the Kafka Topics, to make updated all the microservices.
-With this table the software manages what elements will be in each microservice.
-In the sysbaseelement_tbl is created the KaftaTopic in the scope and inside this scope you create the topics.
-In this table is assigned the baseelement_idn to a specific Topic. 
-  ***You can assign one element to more than one Topic.***
-After you create or update and element, the system get the data of this table to know wich queues must be updated.
-If baseelement_tbl is a Scope, all elements it contains must be updated.
-    Important: idn = idnum (all the field ended with _idn, the origen of the value is the column idnum of the table sysbaseelement_tbl).
-The key for each row/record:
-    baseelementkafka_idnum --> is the autoincrement number auto generated.
-    baseelementkafka_id --> is the uniqueidentifier auto generated.
-The unique Key is the union of:
-    systable_idn -> the idnum of the table owned of the element.
-    element_idn -> the idnum of the element.
-    kafkatopic_idn -> the Kafka of a queue Topic idnum are in the sysbaseelement_tbl.
-        unique = One KafkaTopicIDn must be unique for each element of the each table.
-Common Field/Columns for all tables
-  The objective of these are to store critical information for the system and the record history.
-    stated_idn --> The stated_idn define if the record is enable or not, or the custom state difined. Linked to the system database through sysbaseelement_mir.
-    createdby_idn --> The createdby_idn is the user_idnum of the user who created the record. Linked to the userdb database through userauthorization_tbl.
-    lastmodifiedby_idn --> The lastmodifiedby_idn is the user_idnum of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.
-    ownedby_idn --> The ownedby_idn is the user_idnum of the record owner. Linked to the userdb database through userauthorization_tbl.
-    date_created --> The date_created is the record creation datetime UTC.
-    date_timestamp --> The date_timestamp is the datetime UTC of the last modification.
-    tzname_idn --> The sysbaseelement_idnum of the TimeZone. Linked to the system database through sysbaseelement_mir.
-    tzoffset --> The number of the diference between ZeroTimeZone and the TimeZone where the record is created or updated.
-    table_history --> The table_history contain then change history of each column. The value is set only if it has changed from the previous value.
-*/
-
--- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Delete the table sysbaseelementkafka_tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
@@ -85,6 +54,21 @@ The unique Key is the union of:
     element_idn -> the idnum of the element.
     kafkatopic_idn -> the Kafka of a queue Topic idnum are in the sysbaseelement_tbl.
         unique = One KafkaTopicIDn must be unique for each element of the each table.';
+
+/*
+Common Field/Columns for all tables
+  The objective of these are to store critical information for the system and the record history.
+    stated_idn --> The stated_idn define if the record is enable or not, or the custom state difined. Linked to the system database through sysbaseelement_mir.
+    createdby_idn --> The createdby_idn is the user_idnum of the user who created the record. Linked to the userdb database through userauthorization_tbl.
+    lastmodifiedby_idn --> The lastmodifiedby_idn is the user_idnum of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.
+    ownedby_idn --> The ownedby_idn is the user_idnum of the record owner. Linked to the userdb database through userauthorization_tbl.
+    date_created --> The date_created is the record creation datetime UTC.
+    date_timestamp --> The date_timestamp is the datetime UTC of the last modification.
+    tzname_idn --> The sysbaseelement_idnum of the TimeZone. Linked to the system database through sysbaseelement_mir.
+    tzoffset --> The number of the diference between ZeroTimeZone and the TimeZone where the record is created or updated.
+    table_history --> The table_history contain then change history of each column. The value is set only if it has changed from the previous value.
+*/
+
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the Trigger Before Insert - sysbaseelementkafka_tbl
