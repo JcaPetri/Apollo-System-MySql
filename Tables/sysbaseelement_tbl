@@ -1,173 +1,179 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysBaseElements_Tbl table
+-- Create the sysbaseelement_tbl table
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Delete the table SysBaseElements_Tbl if Exits, but first you must to altere the tables that have a referenced foreign key
+-- Delete the table sysbaseelement_tbl if Exits, but first you must to altere the tables that have a referenced foreign key
 USE systemsdb;
 -- First you must to delete the Foreing Key Constraint;
--- The referenced SysBaseElements_Tbl Tables:
-ALTER TABLE `systemsdb`.`SysBaseElementLanguages_Tbl` DROP FOREIGN KEY `BaseElementLanguageIDn_Rel`;
-ALTER TABLE `systemsdb`.`SysBaseElementComments_Tbl` DROP FOREIGN KEY `CommentIDn_Rel`;
-ALTER TABLE `systemsdb`.`SysMicroservices_Tbl`  DROP FOREIGN KEY `MicroserviceIDn_Rel`;
-ALTER TABLE `systemsdb`.`SysCompanies_Tbl`  DROP FOREIGN KEY `CompanyIDn_Rel`;
-ALTER TABLE `systemsdb`.`SysRootElements_Tbl`  DROP FOREIGN KEY `RootElementIDn_Rel`;
-ALTER TABLE `systemsdb`.`SysEntities_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`; 
-ALTER TABLE `systemsdb`.`SysEntityFields_Tbl`  DROP FOREIGN KEY `FieldIDn_Rel`;  
-ALTER TABLE `systemsdb`.`SysEntityStructures_Tbl`  DROP FOREIGN KEY `FieldIDn_Rel`;  
-ALTER TABLE `systemsdb`.`SysEntityStructures_Tbl`  DROP FOREIGN KEY `EntityIDn_Rel`;  
-ALTER TABLE `systemsdb`.`SysEntityStructureFieldProperties_Tbl`  DROP FOREIGN KEY `FieldPropertyIDn_Rel`;  
-ALTER TABLE `systemsdb`.`SysEntityStructureFieldDefaultValues_Tbl`  DROP FOREIGN KEY `DefaultVersionIDn_Rel`;  
+-- The referenced sysbaseelement_tbl Tables:
+ALTER TABLE `systemsdb`.`sysbaseelementlanguage_tbl` DROP FOREIGN KEY `baseelementlanguageidn_rel`;
+ALTER TABLE `systemsdb`.`sysbaseelementcomment_tbl` DROP FOREIGN KEY `commentidn_rel`;
+ALTER TABLE `systemsdb`.`sysmicroservice_tbl`  DROP FOREIGN KEY `microserviceidn_rel`;
+ALTER TABLE `systemsdb`.`syscompany_tbl`  DROP FOREIGN KEY `companyidn_rel`;
+ALTER TABLE `systemsdb`.`sysrootelement_tbl`  DROP FOREIGN KEY `rootelementidn_rel`;
+ALTER TABLE `systemsdb`.`sysentity_tbl`  DROP FOREIGN KEY `entityidn_rel`; 
+ALTER TABLE `systemsdb`.`sysentityField_tbl`  DROP FOREIGN KEY `fieldidn_rel`;  
+ALTER TABLE `systemsdb`.`sysentitystructure_tbl`  DROP FOREIGN KEY `fieldidn_rel`;  
+ALTER TABLE `systemsdb`.`sysentitystructure_tbl`  DROP FOREIGN KEY `entityidn_rel`;  
+ALTER TABLE `systemsdb`.`sysentitystructurefieldproperty_tbl`  DROP FOREIGN KEY `fieldpropertyidn_rel`;  
+ALTER TABLE `systemsdb`.`sysentitystructurefielddefaultvalue_tbl`  DROP FOREIGN KEY `defaultversionidn_rel`;  
 
 -- After deleted the referenced, you can delete the table
-DROP TABLE IF EXISTS `systemsdb`.`SysBaseElements_Tbl`;
+DROP TABLE IF EXISTS `systemsdb`.`sysbaseelement_tbl`;
 
-CREATE TABLE `SysBaseElements_Tbl` (
-	  `IDNum` int NOT NULL AUTO_INCREMENT COMMENT 'The IDNum is the autoincrement number', 
-	  `ID` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The ID is the uniqueidentifier auto generated V4', 
-	  `IDName` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The IDName is the user-readable code for the selected language.',
-	  `IDNameStructureIDn` int NOT NULL COMMENT 'The IDNameStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.',
-	  `ScopeIDn` int NOT NULL COMMENT 'The ScopeIDn is the IdNum of the Scope, the Name must be unique for the scope of application, usually a Table',
-	  `BusinessUnitIDn` int NOT NULL COMMENT 'The BusinessUnitIDn is the IdNum of the BusinessUnit to which the IDName is assigned',
-	  `LanguageIDn` int NOT NULL COMMENT 'The LanguageIDn is the IdNum of the language in which the Name is defined',
-	  `IDCode` int NOT NULL COMMENT 'The IDCode is the unique code of the record for a scope and company.',
-	  `DefinitionIDn` int NOT NULL COMMENT 'The DefinitionIDn is the IdNum of the element definition type.',
-	  `InformationTypeIDn` int NOT NULL COMMENT 'Then InformationTypeIDn is the IdNum of the type of information that the record represents.',
-	  `IDIsUsed` tinyint NOT NULL COMMENT 'The IDIsUsed determines if the registry is used or not.',
-	  `StateIDn` smallint NOT NULL COMMENT 'The StatedIDn define if the record is enable or not.',
-	  `CreatedByIDn` int NOT NULL COMMENT 'The CreatedByIDn is the IdNum of the user who created the record.',
-	  `LastModifiedByIDn` int NOT NULL COMMENT 'The LastModifiedByIDn is the IdNum of the last user who modified the record.',
-	  `OwnerIDn` int NOT NULL COMMENT 'The OwnerIDn is the IdNum of the record owner.',
-	  `DateCreated` datetime NOT NULL COMMENT 'The DateCreated is the record creation date with UTC.',
-	  `DateTimeStamp` timestamp NOT NULL COMMENT 'The DateTimeStamp is the date of the last modification of the record with UTC.',
- 	  `TzNameIDn` smallint NOT NULL COMMENT 'The IDNum of the TimeZone',				
-	  `TzOffset` smallint NOT NULL COMMENT 'The diferences between ZeroTimeZone and the TimeZone where the record is created or updated.',					
-	  `TableHistory` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The TableHistory contain then change history of each column.',
-	  PRIMARY KEY `ID_SbePriKey` (`IDNum`) COMMENT 'The sequence SysBaseElements_Tbl_seq generate the nextval',
-	  UNIQUE KEY `ID_SbeUnique` (`ID`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
-	  UNIQUE KEY `IDNum_SbeUnique` (`IDNum`) COMMENT 'The IDNum must be unique.',
-	  UNIQUE KEY `IDNameScopeBusUnitLang_SbeUnique` (`IDName`,`ScopeIDn`,`BusinessUnitIDn`,`LanguageIDn`) COMMENT 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.',
-	  UNIQUE KEY `IDCodeIDScopeIDBusUnit_SbeUnique` (`BusinessUnitIDn`,`ScopeIDn`, `IDCode`) COMMENT 'A IDCode must be unique for a ScopeId and for a BusinessUnitId.',
-	  KEY `ID_SbeIdx` (`ID`) /*!80000 INVISIBLE */ COMMENT 'The ID alway must be indexed.',
-	  KEY `IDNum_SbeIdx` (`IDNum`) /*!80000 INVISIBLE */ COMMENT 'The IDNum must always be indexed.',
-	  KEY `IDCode_SbeIdx` (`IDCode`) /*!80000 INVISIBLE */ COMMENT 'The IDCode must be indexed, because it works like IDNum.',
-	  KEY `IDBusUnitScop_SbeIdx` (`IDIsUsed` ASC, `BusinessUnitIDn` ASC, `ScopeIDn`ASC) COMMENT 'To optimize the search of Business Tables.'
+CREATE TABLE `systemsdb`.`sysbaseelement_tbl` (
+    `baseelement_idnum` int NOT NULL AUTO_INCREMENT COMMENT 'The baseelement_idnum is the autoincrement number', 
+    `baseelement_id` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The baseelement_id is the uniqueidentifier auto generated V4', 
+    `tablefield_idn` integer NOT NULL COMMENT 'The tablefield_idn is the baseelement_idn of the field/column assined to row.',
+    `fieldvaluetype_idn` integer NOT NULL COMMENT 'The fieldvaluetype_idn is the baseelement_idn of the type the fieldvalue (ex, text, number, other idnum, etc).',
+    `fieldvalue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The fieldvalue is the user-readable code for the selected language.',
+    `language_idn` int NOT NULL COMMENT 'The language_idn is the IdNum of the language in which the Name is defined',
+    `father_idn` int NOT NULL COMMENT 'The father_idn is the dataelement_idnum of the row, this idnum join all fields/columns making a classical table.',
+    `scope_idn` int NOT NULL COMMENT 'The scope_idn is the IdNum of the Scope, the Name must be unique for the scope of application, usually a Table',
+    `group_idn` int NOT NULL COMMENT 'The group_idn is the IdNum of the BusinessUnit to which the fieldvalue is assigned',
+    `id_order` int NOT NULL COMMENT 'The id_order is the unique code of the record for a scope and company.',
+    `definition_idn` int NOT NULL COMMENT 'The definition_idn is the IdNum of the element definition type.',
+    `state_idn` smallint NOT NULL COMMENT 'The stated_idn define if the record is enable or not, or the custom state difined.',
+    `createdby_idn` int NOT NULL COMMENT 'The createdby_idn is the user_idnum of the user who created the record. Linked to the userdb database through userauthorization_tbl.',
+    `lastmodifiedby_idn` int NOT NULL COMMENT 'The lastmodifiedby_idn is the user_idnum of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.',
+    `ownedby_idn` int NOT NULL COMMENT 'The ownedby_idn is the user_idnum of the record owner. Linked to the userdb database through userauthorization_tbl.',
+    `date_created` datetime(6) NOT NULL COMMENT 'The date_created is the record creation datetime UTC.',
+    `date_timestamp` datetime(6) NOT NULL COMMENT 'The date_timestamp is the datetime UTC of the last modification.',
+    `tzname_idn` smallint NOT NULL COMMENT 'The sysbaseelement_idnum of the TimeZone.',
+    `tzoffset` smallint NOT NULL COMMENT 'The number of the diference between ZeroTimeZone and the TimeZone where the record is created or updated.',
+    `table_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The table_history contain then change history of each column. The value is set only if it has changed from the previous value.',
+    PRIMARY KEY `id_sbeKey` (`baseelement_idnum`) COMMENT 'The sequence is an autoincremental value.',
+    UNIQUE KEY `id_sbeuni` (`baseelement_id`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
+    UNIQUE KEY `baseelement_idnum_sbeuni` (`baseelement_idnum`) COMMENT 'The baseelement_idnum must be unique.',
+    UNIQUE KEY `fieldvaluescopegrouplang_sbeuni` (`fieldvalue` ASC, `father_idn` ASC,`scope_idn` ASC,`group_idn` ASC,`language_idn` ASC) COMMENT 'A fieldvalue must be unique for a father_idn, scope_idn, for a group_idn, and language_idn.',
+    KEY `id_sbeidx` (`baseelement_id`) /*!80000 INVISIBLE */ COMMENT 'The baseelement_id alway must be indexed.',
+    KEY `baseelement_idnum_sbeidx` (`baseelement_idnum`) /*!80000 INVISIBLE */ COMMENT 'The baseelement_idnum must always be indexed.',
+    KEY `stategroupscope_sbeidx` (`state_idn`ASC, `group_idn` ASC, `scope_idn`ASC) COMMENT 'To optimize the search of Microservices Tables.'
 ) ENGINE=InnoDB 
-	AUTO_INCREMENT=0 
-	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
-	COMMENT='Contains the diccionary of all system elements of the Microservice.
-The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
-In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
-To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
+    AUTO_INCREMENT=0 
+    DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
+    COMMENT='Contains the elements of all tables in the System Microservice.
+Concept: One row can be the union off many records, one for each column. To do that is necessary to use father_idn column.
+             Each record is like a cell in a excel grid.
+             To define properties to a field/column, you must specify it, in the sysbaseelementproperty_tbl. Ex: CSS format, Validation Rules, etc.
+             The group_idn define the section, region, company, etc., that the scope belongs to. This group is created in the systemdb database.
 The key for each record:
-	ID		--> is the uniqueidentifier auto generated.
-	IDNum	--> is the autoincrement number auto generated.
+    baseelement_id --> is the uniqueidentifier auto generated.
+    baseelement_idnum --> is the autoincrement number auto generated.
+        Clarification: idn = idnum (all the field ended with _idn, the origen of the value is the column idnum of the table sysbaseelement_tbl or accdataelement_tbl).
+                         Most fields in tables have an idnum as a value. To determine what a code means, you should consult this table.
+                         If you select another language_idn, the system change all theirs values.
 The unique Key is the union of:
-  IDName     		-> is the readable code by the user.
-  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
-  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
-  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
-Important: when you create the element/object in this tabel, this element does not exits for the software. This table is like a dictionary.
-			Only exist when you create the code in the specific table.
-	Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
-Modification Rules:
-	You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
-	Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
-	If you want to change the code and it is in many places, the system must generate another code for the new value
-	To change this value, it must be done by the administrator. 
-	It is best to never change it.
-Comments:
-	In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
-	Example:
-		In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, java entities, classes, etc.
-		In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system.
-		In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
-		In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
-Tips:
-	The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.';
-
-/* 
+    To respect all the rules the unique value must be the combination of: FieldValue/Father/Scope/Group/Language.
+        fieldvalue -> is the readable code by the user.
+        father_idn -> the father_idn define each row of the table.
+        scope_idn -> the scope_idn define the table that contain all the row.
+        group_idn -> the group_idn is the section, company, businessunit owner of the tables.
+        language_idn -> the fieldvalue mus be unique for the language. This dictionary has a default language defined.
+Modification Rules Only when the definition_idn is software:
+    You can change the idname if there is a spelling error. Example you have a spelling error in an invoce and must be invoice.
+    Warning: If I change the code that represents the word invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
+        If you want to change the code and it is in many places, the system must generate another code for the new value.
+        To change this value, it must be done by the administrator. 
+        IT IS BEST TO NEVER CHANGE IT.
+    Clarification: this rules applied to the system data, the only rules to change the common data is respect the unique key.
+Kafka/RabbitMQ:
+    If one element of this table must be in other microservices, the idnum must be added to accdataelementkafka_tbl and assigned to the specific topic.
+';
+/*
 Common Field/Columns for all tables
-	The objective of these are to store critical information for the system and the record history.
-		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
-		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
-		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
-		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
-		DateCreated			--> The DateCreated is the record creation datetime UTC.
-		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
-		TableHistory		-->	The TableHistory contain then change history of each column.
+  The objective of these is to store critical information for the system and the record history.
+    stated_idn --> The stated_idn define if the record is enabled or not, or the custom state defined. Linked to the system database through sysbaseelement_mir.
+    createdby_idn --> The createdby_idn is the userauthorization_idn of the user who created the record. Linked to the userdb database through userauthorization_tbl.
+    lastmodifiedby_idn --> The lastmodifiedby_idn is the userauthorization_idn of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.
+    ownedby_idn --> The ownedby_idn is the userauthorization_idn of the record owner. Linked to the userdb database through userauthorization_tbl.
+    date_created --> The date_created is the record creation datetime UTC.
+    date_timestamp --> The date_timestamp is the datetime UTC of the last modification.
+    tzname_idn --> The sysbaseelement_idnum of the Time Zone. Linked to the system database through sysbaseelement_mir.
+    tzoffset --> The number of the difference between Zero Time Zone and the Time Zone where the record is created or updated.
+    table_history --> The table_history contain then change history of each column. The value is set only if it has changed from the previous value.
 */
 
-
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Insert - SysBaseElements_Tbl
+-- Create the Trigger Before Insert - sysbaseelement_tbl
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeInsert_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`sysbaseelementBeforeInsert_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementsBeforeInsert_Trg` BEFORE INSERT ON `SysBaseElements_Tbl` FOR EACH ROW BEGIN
-	-- In the case, which the request do not give this value, MySql created it.
-	-- Set the ID uniqueidentifier, IDCode, DateCreated and DateTimeStamp
-	IF new.ID IS NULL OR new.ID = '' THEN
-		SET new.ID = uuid();				-- Set the UniqueIdentifier Value
-	END IF;
-    IF new.IDCode IS NULL OR new.IDCode = 0 OR new.IDCode = '' THEN
-		SET new.IDCode = (SELECT ifnull(MAX(IDCode),0) + 1 FROM `systemsdb`.`SysBaseElements_Tbl` WHERE BusinessUnitIDn = new.BusinessUnitIDn AND ScopeIDn = new.ScopeIDn);
-        -- Assign the numeric auto-incremental IDCode for this ScopeIDn and BusinessUnitIDn, because this number must be unique.
-	END IF;
-	SET new.DateCreated = ifnull(new.DateCreated,CURRENT_TIMESTAMP);
-	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
+CREATE TRIGGER `sysbaseelementBeforeInsert_Trg` BEFORE INSERT ON `sysbaseelement_tbl` FOR EACH ROW BEGIN
+    -- In the case, which the request do not give this value, MySql created it.
+    -- Set the baseelement_id uniqueidentifier, id_order, date_created and date_timestamp
+    IF new.baseelement_id IS NULL OR new.baseelement_id = '' THEN
+        SET new.baseelement_id = uuid(); -- Set the UniqueIdentifier Value
+    END IF;
+    IF new.id_order IS NULL OR new.id_order = 0 OR new.id_order = '' THEN
+        SET new.id_order = (SELECT ifnull(MAX(id_order),0) + 1 FROM `systemsdb`.`sysbaseelement_tbl` WHERE father_idn = new.father_idn);
+        -- Assign the numeric auto-incremental id_order for the father_idn, so the column are ordered. 
+        -- If the row has only one column the value is 1.
+        -- The id_order is used to set the orden inside the scopes.
+    END IF;
+    SET new.date_created = ifnull(new.date_created,CURRENT_TIMESTAMP);
+    SET new.date_timestamp = ifnull(new.date_timestamp,CURRENT_TIMESTAMP);
 END$$
 DELIMITER ;
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the Trigger Before Update - SysBaseElements_Tbl
+-- Create the Trigger Before Update - sysbaseelement_tbl
 -- en caso que desde Java no pasen la informacion de estos campos,
--- establece el valor del DateTimeStamp, TableHistory creando el historico de cada registro
+-- establece el valor del date_timestamp, table_history creando el historico de cada registro
 USE systemsdb;
-DROP TRIGGER IF EXISTS `systemsdb`.`SysBaseElementsBeforeUpdate_Trg`;
+DROP TRIGGER IF EXISTS `systemsdb`.`sysbaseelementBeforeUpdate_Trg`;
 DELIMITER $$
 USE `systemsdb`$$
 -- DEFINER=`root`@`localhost` -- When create Trigger in localhost, must add Definer between CREATE and TRIGGER key word.
-CREATE TRIGGER `SysBaseElementsBeforeUpdate_Trg` BEFORE UPDATE ON `SysBaseElements_Tbl` FOR EACH ROW BEGIN
-	DECLARE v_TableHistory text;
-	DECLARE v_TableHistoryOld text;
-	SET new.DateTimeStamp = ifnull(new.DateTimeStamp,CURRENT_TIMESTAMP);
-    IF new.TableHistory = 'SetNull' THEN
-		SET new.TableHistory = null;
-    ELSEIF new.TableHistory = 'SetOff' THEN
-		SET new.TableHistory = old.TableHistory;
+CREATE TRIGGER `sysbaseelementBeforeUpdate_Trg` BEFORE UPDATE ON `sysbaseelement_tbl` FOR EACH ROW BEGIN
+    DECLARE v_tablehistory text;
+    DECLARE v_tablehistoryold text;
+    SET new.date_timestamp = ifnull(new.date_timestamp,CURRENT_TIMESTAMP);
+    IF new.table_history = 'SetNull' THEN
+        SET new.table_history = null;
+    ELSEIF new.table_history = 'SetOff' THEN
+        SET new.table_history = old.table_history;
     ELSE
-		-- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
-		-- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
-		SET v_TableHistoryOld := old.TableHistory;
-		SET v_TableHistory = '';
-		-- IDNum, this value never changes.
-		-- ID, this value never changes.
-		IF NEW.IDName <> OLD.IDName THEN SET v_TableHistory := OLD.IDName; ELSE SET v_TableHistory := '†'; END IF;
-		IF NEW.IDNameStructureIDn <> OLD.IDNameStructureIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDNameStructureIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.ScopeIDn <> OLD.ScopeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.ScopeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.BusinessUnitIDn <> OLD.BusinessUnitIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.BusinessUnitIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.LanguageIDn <> OLD.LanguageIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LanguageIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.IDCode <> OLD.IDCode THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDCode); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.DefinitionIDn <> OLD.DefinitionIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.DefinitionIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.InformationTypeIDn <> OLD.InformationTypeIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.InformationTypeIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.IDIsUsed <> OLD.IDIsUsed THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.IDIsUsed); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.StateIDn <> OLD.StateIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.StateIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.CreatedByIDn <> OLD.CreatedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.CreatedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.LastModifiedByIDn <> OLD.LastModifiedByIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.LastModifiedByIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.OwnerIDn <> OLD.OwnerIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.OwnerIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF v_TableHistoryOld IS NULL THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',NEW.DateCreated); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.DateTimeStamp <> OLD.DateTimeStamp THEN SET v_TableHistory := concat(v_TableHistory,'†',OLD.DateTimeStamp); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.TzNameIDn <> OLD.TzNameIDn THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzNameIDn); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF NEW.TzOffset <> OLD.TzOffset THEN SET v_TableHistory := CONCAT(v_TableHistory,'†',OLD.TzOffset); ELSE SET v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
-		IF v_TableHistoryOld IS NULL THEN
-			SET NEW.TableHistory := v_TableHistory;
-		ELSE
-			SET NEW.TableHistory := concat(v_TableHistory,'‡',v_TableHistory);
-		END IF;
-	END IF;
+        -- When the (New) value is equal the (Old), you set an empty update, because the value is steal in the record.
+        -- When the (New) value is diferent with the (Old), you set the old value in the update. The new value is in the record.
+        SET v_tablehistoryold := old.table_history;
+        SET v_tablehistory = '';
+        -- baseelement_idnum, this value never changes.
+        -- baseelement_id, this value never changes.
+        IF NEW.tablefield_idn <> OLD.tablefield_idn THEN SET v_tablehistory := OLD.tablefield_idn; ELSE SET v_tablehistory := '†'; END IF;
+        IF NEW.fieldvaluetype_idn <> OLD.fieldvaluetype_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldvaluetype_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.fieldvalue <> OLD.fieldvalue THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldvalue); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.language_idn <> OLD.language_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.language_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.father_idn <> OLD.father_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.father_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.scope_idn <> OLD.scope_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.scope_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.group_idn <> OLD.group_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.group_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.id_order <> OLD.id_order THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.id_order); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.definition_idn <> OLD.definition_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.definition_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.state_idn <> OLD.state_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.state_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.createdby_idn <> OLD.createdby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.createdby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.lastmodifiedby_idn <> OLD.lastmodifiedby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.lastmodifiedby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.ownedby_idn <> OLD.ownedby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.ownedby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF v_tablehistoryold IS NULL THEN
+            SET v_tablehistory := CONCAT(v_tablehistory,'†',NEW.date_created); 
+            -- This only add the date_created if is the first time that are going to set up the history value.
+        ELSE 
+            SET v_tablehistory := CONCAT(v_tablehistory,'†'); 
+            -- Do not add a date_created, the record only have the first one.
+        END IF;
+        IF NEW.date_timestamp <> OLD.date_timestamp THEN SET v_tablehistory := concat(v_tablehistory,'†',OLD.date_timestamp); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.tzname_idn <> OLD.tzname_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.tzname_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.tzoffset <> OLD.tzoffset THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.tzoffset); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF v_tablehistoryold IS NULL THEN
+            SET NEW.table_history := v_tablehistory;
+            -- This line ensures add the first history value.
+        ELSE
+            SET NEW.table_history := concat(v_tablehistory,'‡',v_tablehistory);
+            -- This line concat the new and old history value.
+        END IF;
+    END IF;
 END$$
 DELIMITER ;
 
 -- Lista los datos de la tabla
-SELECT * FROM `systemsdb`.`SysBaseElements_Tbl`;
+SELECT * FROM `systemsdb`.`sysbaseelement_tbl`;
