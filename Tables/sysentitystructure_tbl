@@ -20,6 +20,7 @@ CREATE TABLE `systemsdb`.`sysentitystructure_tbl` (
     `fieldnotnull` boolean NOT NULL COMMENT 'The fieldnotnull, if the value is 1 the field can`t be null, otherwise the null value is allowed.',
     `admitdefaultvalue` boolean NOT NULL COMMENT 'The admitdefaultvalue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.',
     `fieldorder` integer NOT NULL COMMENT 'The fieldorder is an ascendent number to order the fields/columns. If the user don`t define, the system insert an autonumeric increment number.',
+    `targettable_idn` integer NOT NULL COMMENT 'The targettable_idn is the idnum of the physical or real table. Link with the sysbaseelement_tbl.',
     `state_idn` smallint NOT NULL COMMENT 'The stated_idn define if the record is enable or not, or the custom state difined. Linked to the system database through sysbaseelement_mir.',
     `createdby_idn` int NOT NULL COMMENT 'The createdby_idn is the user_idnum of the user who created the record. Linked to the userdb database through userauthorization_tbl.',
     `lastmodifiedby_idn` int NOT NULL COMMENT 'The lastmodifiedby_idn is the user_idnum of the last one that modified the record. Linked to the userdb database through userauthorization_tbl.',
@@ -45,6 +46,8 @@ CREATE TABLE `systemsdb`.`sysentitystructure_tbl` (
     COMMENT='Contains the structure of the system. 
 Concept: In this table you build the tables and java entity structures, with their columns and fields.
              You must define all the properties of the entities.
+             The target table is physical or real table where the datas are stored. 
+             When you receive a CRUD, you need to know in wich real table are stored the data, to make the request.
 The key for each record:
     entitystructure_idnum --> is the autoincrement number auto generated.
     entitystructure_id --> is the uniqueidentifier auto generated.
@@ -123,6 +126,7 @@ CREATE TRIGGER `sysentitystructureBeforeUpdate_Trg` BEFORE UPDATE ON `sysentitys
         IF NEW.fieldnotnull <> OLD.fieldnotnull THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldnotnull); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.admitdefaultvalue <> OLD.admitdefaultvalue THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.admitdefaultvalue); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.fieldorder <> OLD.fieldorder THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldorder); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.targettable_idn <> OLD.targettable_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.targettable_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.state_idn <> OLD.state_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.state_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.createdby_idn <> OLD.createdby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.createdby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.lastmodifiedby_idn <> OLD.lastmodifiedby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.lastmodifiedby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
