@@ -13,9 +13,10 @@ The key for each row/record:
     baseelementkafka_idnum --> is the autoincrement number auto generated.
     baseelementkafka_id --> is the uniqueidentifier auto generated.
 The unique Key is the union of:
-    baseelement_idn -> the row from the sysbaseelement_tbl, that recieve the properties.
-    kafkatopic_idn -> the table of the Kafka of a queue Topic are in the sysbaseelement_tbl.
-        unique = One KafkaTopicIDn must be unique for each baseelement_tbl.
+    systable_idn -> the idnum of the table owned of the element.
+    element_idn -> the idnum of the element.
+    kafkatopic_idn -> the Kafka of a queue Topic idnum are in the sysbaseelement_tbl.
+        unique = One KafkaTopicIDn must be unique for each element of the each table.
 Common Field/Columns for all tables
   The objective of these are to store critical information for the system and the record history.
     stated_idn --> The stated_idn define if the record is enable or not, or the custom state difined. Linked to the system database through sysbaseelement_mir.
@@ -43,7 +44,8 @@ DROP TABLE IF EXISTS `systemsdb`.`sysbaseelementkafka_tbl`;
 CREATE TABLE `systemsdb`.`sysbaseelementkafka_tbl` (
     `baseelementkafka_idnum` int NOT NULL AUTO_INCREMENT COMMENT 'The baseelementkafka_idnum is the autoincrement number', 
     `baseelementkafka_id` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The baseelementkafka_id is the uniqueidentifier auto generated V4', 
-    `baseelement_idn` integer NOT NULL COMMENT 'The baseelement_idn is the row of the table sysbaseelement_tbl who receive the new property.',
+    `systable_idn` integer NOT NULL COMMENT 'The systable_idn is the table owned of the element. In this case the table is 1293-sysbaseelement_tbl.',
+    `element_idn` integer NOT NULL COMMENT 'The element_idn is the idnum of the sysbaseelement_tbl.',
     `kafkatopic_idn` int NOT NULL COMMENT 'The kafkatopic_IDn is the idnum of a queue in the Kafka Topics Table.',
     `state_idn` smallint NOT NULL COMMENT 'The stated_idn define if the record is enable or not, or the custom state defined.',
     `createdby_idn` int NOT NULL COMMENT 'The createdby_idn is the user_idnum of the user who created the record. Linked to the userdb database through userauthorization_tbl.',
@@ -56,13 +58,14 @@ CREATE TABLE `systemsdb`.`sysbaseelementkafka_tbl` (
     `table_history` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'The table_history contain then change history of each column. The value is set only if it has changed from the previous value.',
     PRIMARY KEY `id_sbkpkey` (`baseelementkafka_idnum`) COMMENT 'The sequence is an autoincremental value.',
     UNIQUE KEY `id_sbkpuni` (`baseelementkafka_id`) /*!80000 INVISIBLE */ COMMENT 'Is the uniqueidentifier.',
-    UNIQUE KEY `baseelementproperty_sbkpuni` (`baseelementkafka_idnum`) COMMENT 'The baseelementkafka_idnum must be unique.',
-    UNIQUE KEY `baseelementpropcell_sbkpuni` (`baseelement_idn`, `kafkatopic_idn`) COMMENT 'The kafkatopic_idn must be unique for a baseelement_idn.',
+    UNIQUE KEY `baseelementkafka_sbkpuni` (`baseelementkafka_idnum`) COMMENT 'The baseelementkafka_idnum must be unique.',
+    UNIQUE KEY `tableelementkafka_sbkpuni` (`systable_idn`, `element_idn`, `kafkatopic_idn`) COMMENT 'The kafkatopic_idn must be unique for a element_idn and systable_idn.',
     KEY `id_sbkidx` (`baseelementkafka_id`) /*!80000 INVISIBLE */ COMMENT 'The baseelementkafka_id alway must be indexed.',
     KEY `baseelementkafka_idnum_sbkidx` (`baseelementkafka_idnum`) /*!80000 INVISIBLE */ COMMENT 'The baseelementkafka_idnum must always be indexed.',
-    KEY `baseelemtablefield_sbkidx` (`baseelement_idn` ASC, `kafkatopic_idn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Tables.',
-    CONSTRAINT `baseelementidn_sbkrel` FOREIGN KEY (`baseelement_idn`) REFERENCES `systemsdb`.`sysbaseelement_tbl` (`baseelement_idnum`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `tablefieldidn_sbkrel` FOREIGN KEY (`kafkatopic_idn`) REFERENCES `systemsdb`.`sysbaseelement_tbl` (`baseelement_idnum`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY `systableelementkafka_sbkidx` (`systable_idn` ASC, `element_idn` ASC, `kafkatopic_idn` ASC) VISIBLE COMMENT 'To optimize the search of one element for a Tables.',
+    CONSTRAINT `systableidn_sbkrel` FOREIGN KEY (`systable_idn`) REFERENCES `systemsdb`.`sysbaseelement_tbl` (`baseelement_idnum`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `elementidn_sbkrel` FOREIGN KEY (`element_idn`) REFERENCES `systemsdb`.`sysbaseelement_tbl` (`baseelement_idnum`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `kafkatopicidn_sbkrel` FOREIGN KEY (`kafkatopic_idn`) REFERENCES `systemsdb`.`sysbaseelement_tbl` (`baseelement_idnum`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB 
     AUTO_INCREMENT=0 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin 
@@ -78,9 +81,10 @@ The key for each row/record:
     baseelementkafka_idnum --> is the autoincrement number auto generated.
     baseelementkafka_id --> is the uniqueidentifier auto generated.
 The unique Key is the union of:
-    baseelement_idn -> the row from the sysbaseelement_tbl, that recieve the properties.
-    kafkatopic_idn -> the table of the Kafka of a queue Topic are in the sysbaseelement_tbl.
-        unique = One KafkaTopicIDn must be unique for each baseelement_tbl.';
+    systable_idn -> the idnum of the table owned of the element.
+    element_idn -> the idnum of the element.
+    kafkatopic_idn -> the Kafka of a queue Topic idnum are in the sysbaseelement_tbl.
+        unique = One KafkaTopicIDn must be unique for each element of the each table.';
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the Trigger Before Insert - sysbaseelementkafka_tbl
@@ -124,7 +128,8 @@ CREATE TRIGGER `sysbaseelementkafkaBeforeUpdate_Trg` BEFORE UPDATE ON `sysbaseel
         SET v_tablehistory = '';
         -- baseelementkafka_idnum, this value never changes.
         -- baseelementkafka_id, this value never changes.
-        IF NEW.baseelement_idn <> OLD.baseelement_idn THEN SET v_tablehistory := OLD.baseelement_idn; ELSE SET v_tablehistory := '†'; END IF;
+        IF NEW.systable_idn <> OLD.systable_idn THEN SET v_tablehistory := OLD.systable_idn; ELSE SET v_tablehistory := '†'; END IF;
+        IF NEW.element_idn <> OLD.element_idn THEN SET v_tablehistory := OLD.element_idn; ELSE SET v_tablehistory := '†'; END IF;
         IF NEW.kafkatopic_idn <> OLD.kafkatopic_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.kafkatopic_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.state_idn <> OLD.state_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.state_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.createdby_idn <> OLD.createdby_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.createdby_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
