@@ -1,38 +1,46 @@
+DROP VIEW IF EXISTS `systemsdb`.`SysEntityStructure_Vie` ;
+USE `systemsdb`;
 CREATE 
-    ALGORITHM = UNDEFINED 
+     OR REPLACE ALGORITHM = UNDEFINED 
     DEFINER = `aposysadm`@`%` 
     SQL SECURITY DEFINER
-VIEW `SysEntityStructure_Vie` AS
-    SELECT 
-        `ses`.`IDNum` AS `IDNum`,
-        `ses`.`ID` AS `ID`,
-        `ses`.`MicroserviceIDn` AS `MicroserviceIDn`,
-        `be03`.`IDName` AS `Microservice`,
-        `ses`.`EntityIDn` AS `EntityIDn`,
-        `be02`.`IDName` AS `Entity`,
-        `ses`.`FieldIDn` AS `FieldIDn`,
-        `be01`.`IDName` AS `Field`,
-        `ses`.`DataTypeIDn` AS `DataTypeIDn`,
-        `be04`.`IDName` AS `DataType`,
-        `ses`.`FieldOrder` AS `FieldOrder`,
-        `ses`.`AdmitDefaultValue` AS `AdmitDefaultValue`,
-        `ses`.`FieldNotNull` AS `FieldNotNull`,
-        `ses`.`StateIDn` AS `StateIDn`,
-        `be05`.`IDName` AS `State`,
-        `ses`.`CreatedByIDn` AS `CreatedByIDn`,
-        `ses`.`LastModifiedByIDn` AS `LastModifiedByIDn`,
-        `ses`.`OwnerIDn` AS `OwnerIDn`,
-        `ses`.`DateCreated` AS `DateCreated`,
-        `ses`.`DateTimeStamp` AS `DateTimeStamp`,
-        `ses`.`TzNameIDn` AS `TzNameIDn`,
-        `be06`.`IDName` AS `TzName`,
-        `ses`.`TzOffset` AS `TzOffset`,
-        `ses`.`TableHistory` AS `TableHistory`
-    FROM
-        ((((((`SysEntityStructures_Tbl` `ses`
-        JOIN `SysBaseElements_Tbl` `be01` ON ((`ses`.`FieldIDn` = `be01`.`IDNum`)))
-        JOIN `SysBaseElements_Tbl` `be02` ON ((`ses`.`EntityIDn` = `be02`.`IDNum`)))
-        JOIN `SysBaseElements_Tbl` `be03` ON ((`ses`.`MicroserviceIDn` = `be03`.`IDNum`)))
-        JOIN `SysBaseElements_Tbl` `be04` ON ((`ses`.`DataTypeIDn` = `be04`.`IDNum`)))
-        JOIN `SysBaseElements_Tbl` `be05` ON ((`ses`.`StateIDn` = `be05`.`IDNum`)))
-        JOIN `SysBaseElements_Tbl` `be06` ON ((`ses`.`TzNameIDn` = `be06`.`IDNum`)))
+VIEW `systemsdb`.`sysentitystructure_vie` AS
+SELECT 
+        ses.entitystructure_idnum ,
+        ses.entitystructure_id,
+        ses.field_idn,
+        sbe01.fieldvalue AS Field,
+        ses.entity_idn,
+        sbe02.fieldvalue AS Entity,
+        ses.microservice_idn,
+        sbe03.fieldvalue AS Microservice,
+        ses.datatype_idn,
+        sbe04.fieldvalue AS DataType,
+        ses.fieldnotnull,
+        ses.admitdefaultvalue,
+        ses.fieldorder,
+        ses.targettable_idn,
+        sbe05.fieldvalue AS TargetTable,
+        ses.state_idn,
+        sbe06.fieldvalue AS State,
+        ses.createdby_idn,
+        ses.lastmodifiedby_idn,
+        ses.ownedby_idn,
+        ses.date_created,
+        ses.date_timestamp,
+        ses.tzname_idn,
+        sbe07.fieldvalue AS TzName,
+        ses.tzoffset,
+        ses.table_history
+    FROM systemsdb.sysentitystructure_tbl AS ses
+        LEFT OUTER JOIN systemsdb.sysbaseelement_tbl sbe01 ON ses.field_idn = sbe01.baseelement_idnum
+        LEFT OUTER JOIN systemsdb.sysbaseelement_tbl sbe02 ON ses.entity_idn = sbe02.baseelement_idnum
+        LEFT OUTER JOIN systemsdb.sysbaseelement_tbl sbe03 ON ses.microservice_idn = sbe03.baseelement_idnum
+        LEFT OUTER JOIN systemsdb.sysbaseelement_tbl sbe04 ON ses.datatype_idn = sbe04.baseelement_idnum
+        LEFT OUTER JOIN systemsdb.sysbaseelement_tbl sbe05 ON ses.targettable_idn = sbe05.baseelement_idnum
+        LEFT OUTER JOIN systemsdb.sysbaseelement_tbl sbe06 ON ses.state_idn = sbe06.baseelement_idnum
+        LEFT OUTER JOIN systemsdb.sysbaseelement_tbl sbe07 ON ses.tzname_idn = sbe07.baseelement_idnum
+;        
+        
+        
+        
