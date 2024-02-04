@@ -1,12 +1,10 @@
--- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the ArtSysEntityStructures_Vie View
-/* Show the SysBaseElements_Vie table
-After the IDn of each field, the view show its meaning.
-*/
--- #########################################################################################################################################################################################
-
+DROP VIEW IF EXISTS `systemsdb`.`sysbaseelement_vie` ;
 USE `systemsdb`;
-CREATE  OR REPLACE VIEW `SysBaseElements_Vie` AS
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `aposysadm`@`%` 
+    SQL SECURITY DEFINER
+VIEW `systemsdb`.`sysbaseelement_vie` AS
 SELECT `sbe`.`baseelement_idnum`,
     `sbe`.`baseelement_id`,
     `sbe`.`tablefield_idn`,
