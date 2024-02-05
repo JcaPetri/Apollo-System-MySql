@@ -15,7 +15,6 @@ CREATE TABLE `systemsdb`.`sysentitystructureproperty_tbl` (
     `entitystructureproperty_id` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The entitystructureproperty_id is the uniqueidentifier auto generated V4', 
     `entitystructure_idn` integer NOT NULL COMMENT 'The entitystructure_idn is the idnum of the entity structure (microservice/table/field). Link with the sysentitystructure_tbl.',
     `fieldproperty_idn` int NOT NULL COMMENT 'The fieldproperty_idn is the idnum of the field property. Link with the sysbaseelement_tbl.',
-    `fieldvaluetype_idn` integer NOT NULL COMMENT 'The fieldvaluetype_idn is the idnum of the value type (idnum, numeric, text, etc). Its come from the sysbaseelement_tbl). When the fieldvaluetype is idnum, the value of the fieldvalue is a references of the sysbaseelement_tbl.',
     `fieldvalue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The fieldvalue is a numeric/text/multivalue/css/javascript/etc value of the property, this value is not standar and can´t be multilanguage. If the value is an idnumtype, the meaning is in the sysentitystructure_tbl.',
     `fieldorder` integer NOT NULL COMMENT 'The fieldorder is an ascendent number to order the fields/columns. If the user don`t define, the system insert an autonumeric increment number.',
     `state_idn` smallint NOT NULL COMMENT 'The stated_idn define if the record is enable or not, or the custom state difined. Linked to the system database through sysbaseelement_mir.',
@@ -172,7 +171,6 @@ CREATE TRIGGER `sysentitystructurepropertyBeforeUpdate_Trg` BEFORE UPDATE ON `sy
         -- entitystructureproperty_id, this value never changes.
         IF NEW.entitystructure_idn <> OLD.entitystructure_idn THEN SET v_tablehistory := OLD.entitystructure_idn; ELSE SET v_tablehistory := '†'; END IF;
         IF NEW.fieldproperty_idn <> OLD.fieldproperty_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldproperty_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
-        IF NEW.fieldvaluetype_idn <> OLD.fieldvaluetype_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldvaluetype_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.fieldvalue <> OLD.fieldvalue THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldvalue); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.fieldorder <> OLD.fieldorder THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldorder); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.state_idn <> OLD.state_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.state_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
