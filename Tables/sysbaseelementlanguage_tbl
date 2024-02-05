@@ -17,7 +17,6 @@ CREATE TABLE `systemsdb`.`sysbaseelementlanguage_tbl` (
     `fieldvalue` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The fieldvalue is the user-readable code for the selected language.',
     `language_idn` int NOT NULL COMMENT 'The language_idn is the IdNum of the language in which the Name is defined',
 -- This value never change from the original table sysbaseelement_tbl
-    `fieldvaluetype_idn` integer NOT NULL COMMENT 'The fieldvaluetype_idn is allway 1511-fieldvaluetext, (because the number and the system idnum are numbers).',
     `tablefield_idn` integer NOT NULL COMMENT 'The tablefield_idn is the baseelement_idn of the field/column assined to row.',
     `father_idn` int NOT NULL COMMENT 'The father_idn is the dataelement_idnum of the row, this idnum join all fields/columns making a classical table.',
     `scope_idn` int NOT NULL COMMENT 'The scope_idn is the IdNum of the Scope, the Name must be unique for the scope of application, usually a Table',
