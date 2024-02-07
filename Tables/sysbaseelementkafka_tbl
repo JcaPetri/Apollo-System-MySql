@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS `systemsdb`.`sysbaseelementkafka_tbl`;
 CREATE TABLE `systemsdb`.`sysbaseelementkafka_tbl` (
     `baseelementkafka_idnum` int NOT NULL AUTO_INCREMENT COMMENT 'The baseelementkafka_idnum is the autoincrement number', 
     `baseelementkafka_id` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The baseelementkafka_id is the uniqueidentifier auto generated V4', 
-    `systable_idn` integer NOT NULL COMMENT 'The systable_idn is the table owned of the element. In this case the table is 1293-sysbaseelement_tbl.',
+    `systable_idn` integer NOT NULL COMMENT 'The systable_idn is the table owned of the element. The reason is that you have the same idnum for each tables. In this case the table is 1293-sysbaseelement_tbl.',
     `element_idn` integer NOT NULL COMMENT 'The element_idn is the idnum of the sysbaseelement_tbl.',
     `kafkatopic_idn` int NOT NULL COMMENT 'The kafkatopic_IDn is the idnum of a queue in the Kafka Topics Table.',
     `state_idn` smallint NOT NULL COMMENT 'The stated_idn define if the record is enable or not, or the custom state defined.',
@@ -53,7 +53,8 @@ The unique Key is the union of:
     systable_idn -> the idnum of the table owned of the element.
     element_idn -> the idnum of the element.
     kafkatopic_idn -> the Kafka of a queue Topic idnum are in the sysbaseelement_tbl.
-        unique = One KafkaTopicIDn must be unique for each element of the each table.';
+        unique = One KafkaTopicIDn must be unique for each element of the each table.
+    Each table has the same autonumeric number for diferent meanings.';
 
 /*
 Common Field/Columns for all tables
