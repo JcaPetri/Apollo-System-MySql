@@ -20,7 +20,7 @@ CREATE TABLE `systemsdb`.`sysentitystructure_tbl` (
     `microservice_idn` integer NOT NULL COMMENT 'The microservice_idn is the idnum of the Microservice that the Entity and Field belong. When is equal System, all microservices hava access to them.',
     `fieldis_nullable` boolean NOT NULL COMMENT 'The fieldnotnull, if the value is 1 the field can`t be null, otherwise the null value is allowed.',
     `admitdefaultvalue` boolean NOT NULL COMMENT 'The admitdefaultvalue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.',
-    `defaultvalueversion_idn` integer NOT NULL COMMENT 'The defaultvaluevesion_idn, is the idnum of the EntityStructureDefaultValue table, contain the system default value. Link with the sysbaseelement_tbl.',
+    `defaultvalueversion_idn` integer COMMENT 'The defaultvaluevesion_idn, is the idnum of the EntityStructureDefaultValue table, contain the system default value. Link with the sysbaseelement_tbl.',
     `dataorigentype_idn` integer NOT NULL COMMENT 'The dataorigentype_idn, is the idnum of the DataOrigenType table, this could be 2781 Database, 2782 Function, 2783 User, 2784 DefaultTable. Link with the sysbaseelement_tbl.',
     `dataorigen_idn` integer NOT NULL COMMENT 'The dataorigen_idn, is the idnum of the DataOrigen table, this could be a script, function, userdata, etc. Link with the sysbaseelement_tbl.',
     `targettable_idn` integer NOT NULL COMMENT 'The targettable_idn is the idnum of the table that are going to receive the data. Link with the sysbaseelement_tbl.',
