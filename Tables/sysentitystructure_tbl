@@ -14,11 +14,15 @@ CREATE TABLE `systemsdb`.`sysentitystructure_tbl` (
     `entitystructure_idnum` int NOT NULL AUTO_INCREMENT COMMENT 'The entitystructure_idnum is the autoincrement number', 
     `entitystructure_id` char(38) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'The entitystructure_id is the uniqueidentifier auto generated V4', 
     `field_idn` integer NOT NULL COMMENT 'The field_idn is the idnum of the field/column of the entity. Link with the sysbaseelement_tbl.',
-    `entity_idn` integer NOT NULL COMMENT 'The entity_idn is the idnum of the entity. Link with the sysbaseelement_tbl.',
-    `microservice_idn` integer NOT NULL COMMENT 'The microservice_idn is the idnum of the Microservice that the Entity and Field belong. When is equal System, all microservices hava access to them.',
-    `fieldnotnull` boolean NOT NULL COMMENT 'The fieldnotnull, if the value is 1 the field can`t be null, otherwise the null value is allowed.',
-    `admitdefaultvalue` boolean NOT NULL COMMENT 'The admitdefaultvalue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.',
     `fieldorder` integer NOT NULL COMMENT 'The fieldorder is an ascendent number to order the fields/columns. If the user don`t define, the system insert an autonumeric increment number.',
+    `entity_idn` integer NOT NULL COMMENT 'The entity_idn is the idnum of the entity. Link with the sysbaseelement_tbl.',
+    `entitytype_idn` integer NOT NULL COMMENT 'The entitytype_idn is the idnum of the type table, could be real or virtual table. Link with the sysbaseelement_tbl.',
+    `microservice_idn` integer NOT NULL COMMENT 'The microservice_idn is the idnum of the Microservice that the Entity and Field belong. When is equal System, all microservices hava access to them.',
+    `fieldis_nullable` boolean NOT NULL COMMENT 'The fieldnotnull, if the value is 1 the field can`t be null, otherwise the null value is allowed.',
+    `admitdefaultvalue` boolean NOT NULL COMMENT 'The admitdefaultvalue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.',
+    `defaultvalueversion_idn` integer NOT NULL COMMENT 'The defaultvaluevesion_idn, is the idnum of the EntityStructureDefaultValue table, contain the system default value. Link with the sysbaseelement_tbl.',
+    `dataorigentype_idn` integer NOT NULL COMMENT 'The dataorigentype_idn, is the idnum of the DataOrigenType table, this could be 2781 Database, 2782 Function, 2783 User, 2784 DefaultTable. Link with the sysbaseelement_tbl.',
+    `dataorigen_idn` integer NOT NULL COMMENT 'The dataorigen_idn, is the idnum of the DataOrigen table, this could be a script, function, userdata, etc. Link with the sysbaseelement_tbl.',
     `targettable_idn` integer NOT NULL COMMENT 'The targettable_idn is the idnum of the table that are going to receive the data. Link with the sysbaseelement_tbl.',
     `targetfield_idn` integer NOT NULL COMMENT 'The targetfield_idn is the idnum of the field that are going to receive the data. Link with the sysbaseelement_tbl.',
     `fieldcomment_idn` integer NOT NULL COMMENT 'The comment is the explanation of the field used.',
@@ -121,11 +125,15 @@ CREATE TRIGGER `sysentitystructureBeforeUpdate_Trg` BEFORE UPDATE ON `sysentitys
         -- entitystructure_idnum, this value never changes.
         -- entitystructure_id, this value never changes.
         IF NEW.field_idn <> OLD.field_idn THEN SET v_tablehistory := OLD.field_idn; ELSE SET v_tablehistory := '†'; END IF;
-        IF NEW.entity_idn <> OLD.entity_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.entity_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
-        IF NEW.microservice_idn <> OLD.microservice_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.microservice_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
-        IF NEW.fieldnotnull <> OLD.fieldnotnull THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldnotnull); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
-        IF NEW.admitdefaultvalue <> OLD.admitdefaultvalue THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.admitdefaultvalue); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.fieldorder <> OLD.fieldorder THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldorder); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.entity_idn <> OLD.entity_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.entity_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.entitytype_idn <> OLD.entitytype_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.entitytype_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.microservice_idn <> OLD.microservice_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.microservice_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.fieldis_nullable <> OLD.fieldis_nullable THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldis_nullable); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.admitdefaultvalue <> OLD.admitdefaultvalue THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.admitdefaultvalue); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.defaultvalueversion_idn <> OLD.defaultvalueversion_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.defaultvalueversion_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.dataorigentype_idn <> OLD.dataorigentype_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.dataorigentype_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
+        IF NEW.dataorigen_idn <> OLD.dataorigen_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.dataorigen_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.targettable_idn <> OLD.targettable_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.targettable_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.targetfield_idn <> OLD.targetfield_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.targetfield_idn); ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
         IF NEW.fieldcomment_idn <> OLD.fieldcomment_idn THEN SET v_tablehistory := CONCAT(v_tablehistory,'†',OLD.fieldcomment_idn; ELSE SET v_tablehistory := CONCAT(v_tablehistory,'†'); END IF;
